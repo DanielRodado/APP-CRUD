@@ -3,11 +3,15 @@ package com.mindhub.AppCrud.models;
 
 import jakarta.persistence.*;
 
-@MappedSuperclass
-@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
 public class Person {
 
     // Properties
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     private String firstName, lastName, email, password;
 
