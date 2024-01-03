@@ -1,19 +1,17 @@
 package com.mindhub.AppCrud.models;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
-@Entity
+@MappedSuperclass
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Person {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    // Properties
 
     private String firstName, lastName, email, password;
+
+    // Constructor methods
 
     public Person() {
     }
@@ -25,9 +23,7 @@ public class Person {
         this.password = password;
     }
 
-    public String getId() {
-        return id;
-    }
+    // Accessory methods
 
     public String getFirstName() {
         return firstName;
