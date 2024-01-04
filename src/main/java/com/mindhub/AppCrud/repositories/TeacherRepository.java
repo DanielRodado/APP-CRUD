@@ -6,4 +6,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource
 public interface TeacherRepository extends JpaRepository<Teacher, String> {
+
+    Teacher findByEmail(String email);
+
 }
