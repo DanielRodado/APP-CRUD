@@ -22,7 +22,7 @@ public class SecurityConfig {
         http.authorizeHttpRequests(auth -> auth
                 .requestMatchers("/login", "/h2-console/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
-                .anyRequest().authenticated());
+                .anyRequest().permitAll());
 
         http.csrf(csrf -> csrf.disable());
 
