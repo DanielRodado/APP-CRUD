@@ -1,9 +1,6 @@
 package com.mindhub.AppCrud;
 
-import com.mindhub.AppCrud.models.Course;
-import com.mindhub.AppCrud.models.CourseSchedule;
-import com.mindhub.AppCrud.models.Schedule;
-import com.mindhub.AppCrud.models.StudentCourse;
+import com.mindhub.AppCrud.models.*;
 import com.mindhub.AppCrud.models.subClass.Admin;
 import com.mindhub.AppCrud.models.subClass.Student;
 import com.mindhub.AppCrud.models.subClass.Teacher;
@@ -35,16 +32,16 @@ public class AppCrudApplication {
 			adminRepository.save(adminOne);
 
 			// Schedules
-			Schedule scheduleOne = new Schedule("Monday", "14:00 hrs", "18:00 hrs");
+			Schedule scheduleOne = new Schedule(DayType.MONDAY, ShiftType.AFTERNOON,"14:00 hrs", "18:00 hrs");
 			scheduleRepository.save(scheduleOne);
 
-			Schedule scheduleTwo = new Schedule("Tuesday", "07:30 hrs", "10:00 hrs");
+			Schedule scheduleTwo = new Schedule(DayType.THURSDAY, ShiftType.MORNING, "07:30 hrs", "10:00 hrs");
 			scheduleRepository.save(scheduleTwo);
 
-			Schedule scheduleThree = new Schedule("Wednesday", "12:00 hrs", "16:30 hrs");
+			Schedule scheduleThree = new Schedule(DayType.WEDNESDAY, ShiftType.AFTERNOON, "12:00 hrs", "16:30 hrs");
 			scheduleRepository.save(scheduleThree);
 
-			Schedule scheduleFour = new Schedule("Thursday", "10:00 hrs", "12:00 hrs");
+			Schedule scheduleFour = new Schedule(DayType.THURSDAY, ShiftType.EVENING, "18:30 hrs", "21:30 hrs");
 			scheduleRepository.save(scheduleFour);
 
 			// Teachers and courses

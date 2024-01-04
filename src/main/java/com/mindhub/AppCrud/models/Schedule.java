@@ -14,7 +14,11 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private String dayWeek, startTime, timeEnd;
+    private DayType dayWeek;
+
+    private ShiftType shiftType;
+
+    private String startTime, timeEnd;
 
     @OneToMany(mappedBy = "schedule", fetch = FetchType.EAGER)
     private Set<CourseSchedule> courseSchedules = new HashSet<>();
@@ -24,8 +28,9 @@ public class Schedule {
     public Schedule() {
     }
 
-    public Schedule(String dayWeek, String startTime, String timeEnd) {
+    public Schedule(DayType dayWeek, ShiftType shiftType, String startTime, String timeEnd) {
         this.dayWeek = dayWeek;
+        this.shiftType = shiftType;
         this.startTime = startTime;
         this.timeEnd = timeEnd;
     }
@@ -36,12 +41,20 @@ public class Schedule {
         return id;
     }
 
-    public String getDayWeek() {
+    public DayType getDayWeek() {
         return dayWeek;
     }
 
-    public void setDayWeek(String dayWeek) {
+    public void setDayWeek(DayType dayWeek) {
         this.dayWeek = dayWeek;
+    }
+
+    public ShiftType getShiftType() {
+        return shiftType;
+    }
+
+    public void setShiftType(ShiftType shiftType) {
+        this.shiftType = shiftType;
     }
 
     public String getStartTime() {

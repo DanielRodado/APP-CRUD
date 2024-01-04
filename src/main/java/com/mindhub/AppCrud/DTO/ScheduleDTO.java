@@ -1,12 +1,18 @@
 package com.mindhub.AppCrud.DTO;
 
+import com.mindhub.AppCrud.models.DayType;
 import com.mindhub.AppCrud.models.Schedule;
+import com.mindhub.AppCrud.models.ShiftType;
 
 public class ScheduleDTO {
 
     // Properties
 
-    private final String id, dayWeek, startTime, timeEnd;
+    private final String id, startTime, timeEnd;
+
+    private final DayType dayWeek;
+
+    private final ShiftType shiftType;
 
     private final int coursesInThisSchedule;
 
@@ -15,6 +21,7 @@ public class ScheduleDTO {
     public ScheduleDTO(Schedule schedule) {
         this.id = schedule.getId();
         this.dayWeek = schedule.getDayWeek();
+        this.shiftType = schedule.getShiftType();
         this.startTime = schedule.getStartTime();
         this.timeEnd = schedule.getTimeEnd();
         this.coursesInThisSchedule = schedule.getCourseSchedules().size();
@@ -26,8 +33,12 @@ public class ScheduleDTO {
         return id;
     }
 
-    public String getDayWeek() {
+    public DayType getDayWeek() {
         return dayWeek;
+    }
+
+    public ShiftType getShiftType() {
+        return shiftType;
     }
 
     public String getStartTime() {
