@@ -1,6 +1,5 @@
 package com.mindhub.AppCrud.models;
 
-import com.mindhub.AppCrud.models.subClass.Student;
 import com.mindhub.AppCrud.models.subClass.Teacher;
 import jakarta.persistence.*;
 
@@ -22,7 +21,7 @@ public class Course {
     private Teacher teacher;
 
     @OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
-    private Set<Student> students = new HashSet<>();
+    private Set<StudentCourse> studentCourses = new HashSet<>();
 
     @OneToMany(mappedBy = "course", fetch = FetchType.EAGER)
     private Set<CourseSchedule> courseSchedules = new HashSet<>();
@@ -67,8 +66,31 @@ public class Course {
         this.teacher = teacher;
     }
 
-    public Set<Student> getStudents() {
-        return students;
+    public Set<StudentCourse> getStudentCourses() {
+        return studentCourses;
     }
 
+    public void setStudentCourses(Set<StudentCourse> studentCourses) {
+        this.studentCourses = studentCourses;
+    }
+
+    public Set<CourseSchedule> getCourseSchedules() {
+        return courseSchedules;
+    }
+
+    public void setCourseSchedules(Set<CourseSchedule> courseSchedules) {
+        this.courseSchedules = courseSchedules;
+    }
+
+    // Methods
+
+    public void addStudentCourse(StudentCourse studentCourse) {
+        this.studentCourses.add(studentCourse);
+        studentCourse.setCourse(this);
+    }
+
+    public void addCourseSchedule(CourseSchedule courseSchedule) {
+        this.courseSchedules.add(courseSchedule);
+        courseSchedule.setCourse(this);
+    }
 }

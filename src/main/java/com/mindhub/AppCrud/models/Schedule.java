@@ -4,6 +4,9 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class Schedule {
 
     // Properties
@@ -13,6 +16,8 @@ public class Schedule {
     private String id;
 
     private String dayWeek, startTime, timeEnd;
+
+    private Set<CourseSchedule> courseSchedules = new HashSet<>();
 
     // Constructor methods
 
@@ -53,5 +58,20 @@ public class Schedule {
 
     public void setTimeEnd(String timeEnd) {
         this.timeEnd = timeEnd;
+    }
+
+    public Set<CourseSchedule> getCourseSchedules() {
+        return courseSchedules;
+    }
+
+    public void setCourseSchedules(Set<CourseSchedule> courseSchedules) {
+        this.courseSchedules = courseSchedules;
+    }
+
+    // Methods
+
+    public void addCourseSchedule(CourseSchedule courseSchedule) {
+        this.courseSchedules.add(courseSchedule);
+        courseSchedule.setSchedule(this);
     }
 }

@@ -1,10 +1,13 @@
 package com.mindhub.AppCrud.models.subClass;
 
+import com.mindhub.AppCrud.models.Course;
 import com.mindhub.AppCrud.models.Person;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class Teacher extends Person {
@@ -13,6 +16,8 @@ public class Teacher extends Person {
 
     @ElementCollection
     private List<String> specializations;
+
+    private Set<Course> courses = new HashSet<>();
 
    // Constructor methods
 
@@ -24,11 +29,28 @@ public class Teacher extends Person {
         this.specializations = specialization;
     }
 
+    // Accessory methods
+
     public List<String> getSpecialization() {
         return specializations;
     }
 
     public void setSpecialization(List<String> specializations) {
         this.specializations = specializations;
+    }
+
+    public Set<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(Set<Course> courses) {
+        this.courses = courses;
+    }
+
+    // Methods
+
+    public void addCourse(Course course) {
+        this.courses.add(course);
+        course.setTeacher(this);
     }
 }
