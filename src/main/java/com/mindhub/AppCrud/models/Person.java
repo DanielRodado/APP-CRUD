@@ -64,4 +64,10 @@ public class Person {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    // Methods
+
+    public String getFullName() {
+        return this.firstName + " " + this.lastName;
+    }
 }

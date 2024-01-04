@@ -10,7 +10,6 @@ import java.util.Set;
 public class Course {
 
     // Properties
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -27,7 +26,6 @@ public class Course {
     private Set<CourseSchedule> courseSchedules = new HashSet<>();
 
     // Constructor methods
-
     public Course() {
     }
 

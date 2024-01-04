@@ -60,6 +60,10 @@ public class Schedule {
         this.timeEnd = timeEnd;
     }
 
+    public int getMaximumCourses() {
+        return 5;
+    }
+
     public Set<CourseSchedule> getCourseSchedules() {
         return courseSchedules;
     }
