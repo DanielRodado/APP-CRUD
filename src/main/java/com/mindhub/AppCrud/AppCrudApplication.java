@@ -11,6 +11,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.List;
+
 @SpringBootApplication
 public class AppCrudApplication {
 
@@ -27,7 +29,8 @@ public class AppCrudApplication {
 			Admin adminOne = new Admin("Daniel", "Rodado", "danielrodado@gmail.com", "admin123");
 			adminRepository.save(adminOne);
 
-			Teacher teacherOne = new Teacher("Martin", "Araolaza", "martin@mentor.com", "mentor123");
+			Teacher teacherOne = new Teacher("Martin", "Araolaza", "martin@mentor.com",
+					"mentor123", List.of("Java", "Spring", "Spring Boot", "PostgreSQL"));
 			teacherRepository.save(teacherOne);
 
 			Student studentOne = new Student("Esteban", "Girardot", "estebang@estudent.com", "student123");

@@ -29,6 +29,10 @@ public class Person {
 
     // Accessory methods
 
+    public String getId() {
+        return id;
+    }
+
     public String getFirstName() {
         return firstName;
     }
