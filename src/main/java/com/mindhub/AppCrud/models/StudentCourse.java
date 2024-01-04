@@ -1,13 +1,11 @@
 package com.mindhub.AppCrud.models;
 
 import com.mindhub.AppCrud.models.subClass.Student;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
+@Entity
 public class StudentCourse {
 
     // Properties

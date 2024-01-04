@@ -4,6 +4,8 @@ import com.mindhub.AppCrud.models.Course;
 import com.mindhub.AppCrud.models.Person;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 
 import java.util.HashSet;
 import java.util.List;
@@ -17,6 +19,7 @@ public class Teacher extends Person {
     @ElementCollection
     private List<String> specializations;
 
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.EAGER)
     private Set<Course> courses = new HashSet<>();
 
    // Constructor methods

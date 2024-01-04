@@ -3,6 +3,8 @@ package com.mindhub.AppCrud.models.subClass;
 import com.mindhub.AppCrud.models.Person;
 import com.mindhub.AppCrud.models.StudentCourse;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.OneToMany;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -11,6 +13,8 @@ import java.util.Set;
 public class Student extends Person {
 
     // Properties
+
+    @OneToMany(mappedBy = "student", fetch = FetchType.EAGER)
     private Set<StudentCourse> studentCourses = new HashSet<>();
 
     // Constructor methods

@@ -1,12 +1,11 @@
 package com.mindhub.AppCrud.models;
 
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.util.HashSet;
 import java.util.Set;
 
+@Entity
 public class Schedule {
 
     // Properties
@@ -17,6 +16,7 @@ public class Schedule {
 
     private String dayWeek, startTime, timeEnd;
 
+    @OneToMany(mappedBy = "schedule", fetch = FetchType.EAGER)
     private Set<CourseSchedule> courseSchedules = new HashSet<>();
 
     // Constructor methods
