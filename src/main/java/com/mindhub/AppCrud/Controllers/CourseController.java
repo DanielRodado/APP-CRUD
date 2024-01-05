@@ -21,7 +21,12 @@ public class CourseController {
     @Autowired
     private CourseRepository courseRepository;
 
-    @GetMapping("/courses/teachers/not")
+    @GetMapping("/courses")
+    public Set<CourseDTO> getAllCoursesDTO() {
+        return courseRepository.findAll().stream().map(CourseDTO::new).collect(Collectors.toSet());
+    }
+
+    @GetMapping("/courses/teachers/unassigned")
     public Set<CourseDTO> getCoursesNotTeacher() {
         return courseRepository.findByTeacherIsNull().stream().map(CourseDTO::new).collect(Collectors.toSet());
     }
