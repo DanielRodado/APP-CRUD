@@ -54,6 +54,9 @@ public class AppCrudApplication {
 			teacherOne.addCourse(courseOne);
 			courseRepository.save(courseOne);
 
+			Course courseTwo = new Course("MERN", "Cohort 52");
+			courseRepository.save(courseTwo);
+
 			// CourseSchedules
 
 			CourseSchedule courseScheduleOne = new CourseSchedule();
@@ -65,6 +68,11 @@ public class AppCrudApplication {
 			courseOne.addCourseSchedule(courseScheduleTwo);
 			scheduleThree.addCourseSchedule(courseScheduleTwo);
 			courseScheduleRepository.save(courseScheduleTwo);
+
+			CourseSchedule courseScheduleThree = new CourseSchedule();
+			courseTwo.addCourseSchedule(courseScheduleThree);
+			scheduleFour.addCourseSchedule(courseScheduleThree);
+			courseScheduleRepository.save(courseScheduleThree);
 
 			// Students
 
