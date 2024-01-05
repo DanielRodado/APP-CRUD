@@ -8,9 +8,11 @@ import com.mindhub.AppCrud.repositories.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 @SpringBootApplication
@@ -32,16 +34,21 @@ public class AppCrudApplication {
 			adminRepository.save(adminOne);
 
 			// Schedules
-			Schedule scheduleOne = new Schedule(DayType.MONDAY, ShiftType.AFTERNOON,"14:00 hrs", "18:00 hrs");
+
+			Schedule scheduleOne = new Schedule(DayType.MONDAY, ShiftType.AFTERNOON, LocalTime.of(14, 0),
+					LocalTime.of(18, 0));
 			scheduleRepository.save(scheduleOne);
 
-			Schedule scheduleTwo = new Schedule(DayType.THURSDAY, ShiftType.MORNING, "07:30 hrs", "10:00 hrs");
+			Schedule scheduleTwo = new Schedule(DayType.THURSDAY, ShiftType.MORNING, LocalTime.of(8, 30),
+					LocalTime.of(10, 30));
 			scheduleRepository.save(scheduleTwo);
 
-			Schedule scheduleThree = new Schedule(DayType.WEDNESDAY, ShiftType.AFTERNOON, "12:00 hrs", "16:30 hrs");
+			Schedule scheduleThree = new Schedule(DayType.WEDNESDAY, ShiftType.AFTERNOON, LocalTime.of(12, 0),
+					LocalTime.of(16, 30));
 			scheduleRepository.save(scheduleThree);
 
-			Schedule scheduleFour = new Schedule(DayType.THURSDAY, ShiftType.EVENING, "18:30 hrs", "21:30 hrs");
+			Schedule scheduleFour = new Schedule(DayType.THURSDAY, ShiftType.EVENING, LocalTime.of(18, 30),
+					LocalTime.of(21, 30));
 			scheduleRepository.save(scheduleFour);
 
 			// Teachers and courses

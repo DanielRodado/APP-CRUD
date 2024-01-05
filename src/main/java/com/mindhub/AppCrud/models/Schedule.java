@@ -2,6 +2,7 @@ package com.mindhub.AppCrud.models;
 
 import jakarta.persistence.*;
 
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ public class Schedule {
 
     private ShiftType shiftType;
 
-    private String startTime, timeEnd;
+    private LocalTime startTime, timeEnd;
 
     @OneToMany(mappedBy = "schedule", fetch = FetchType.EAGER)
     private Set<CourseSchedule> courseSchedules = new HashSet<>();
@@ -28,7 +29,7 @@ public class Schedule {
     public Schedule() {
     }
 
-    public Schedule(DayType dayWeek, ShiftType shiftType, String startTime, String timeEnd) {
+    public Schedule(DayType dayWeek, ShiftType shiftType, LocalTime startTime, LocalTime timeEnd) {
         this.dayWeek = dayWeek;
         this.shiftType = shiftType;
         this.startTime = startTime;
@@ -57,19 +58,19 @@ public class Schedule {
         this.shiftType = shiftType;
     }
 
-    public String getStartTime() {
+    public LocalTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(String startTime) {
+    public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
 
-    public String getTimeEnd() {
+    public LocalTime getTimeEnd() {
         return timeEnd;
     }
 
-    public void setTimeEnd(String timeEnd) {
+    public void setTimeEnd(LocalTime timeEnd) {
         this.timeEnd = timeEnd;
     }
 

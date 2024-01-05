@@ -4,11 +4,15 @@ import com.mindhub.AppCrud.models.CourseSchedule;
 import com.mindhub.AppCrud.models.DayType;
 import com.mindhub.AppCrud.models.ShiftType;
 
+import java.time.LocalTime;
+
 public class CourseScheduleDTO {
 
     // Properties
 
-    private final String id, scheduleId, startTime, timeEnd;
+    private final String id, scheduleId;
+
+    private final LocalTime startTime, timeEnd;
 
     private final DayType dayWeek;
 
@@ -43,11 +47,11 @@ public class CourseScheduleDTO {
         return shiftType;
     }
 
-    public String getStartTime() {
+    public LocalTime getStartTime() {
         return startTime;
     }
 
-    public String getTimeEnd() {
+    public LocalTime getTimeEnd() {
         return timeEnd;
     }
 }
