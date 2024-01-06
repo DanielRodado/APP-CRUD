@@ -12,7 +12,7 @@ public class CourseScheduleDTO {
 
     private final String id, scheduleId;
 
-    private final LocalTime startTime, timeEnd;
+    private final LocalTime startTime, endTime;
 
     private final DayType dayWeek;
 
@@ -26,7 +26,7 @@ public class CourseScheduleDTO {
         this.dayWeek = courseSchedule.getSchedule().getDayWeek();
         this.shiftType = courseSchedule.getSchedule().getShiftType();
         this.startTime = courseSchedule.getSchedule().getStartTime();
-        this.timeEnd = courseSchedule.getSchedule().getTimeEnd();
+        this.endTime = courseSchedule.getSchedule().getEndTime();
     }
 
     // Accessory methods
@@ -51,7 +51,7 @@ public class CourseScheduleDTO {
         return startTime;
     }
 
-    public LocalTime getTimeEnd() {
-        return timeEnd;
+    public LocalTime getEndTime() {
+        return endTime;
     }
 }

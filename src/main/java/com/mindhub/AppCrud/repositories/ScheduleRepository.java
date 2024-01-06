@@ -11,7 +11,7 @@ import java.time.LocalTime;
 @RepositoryRestResource
 public interface ScheduleRepository extends JpaRepository<Schedule, String> {
 
-    boolean existsByDayWeekAndShiftTypeAndStartTimeAndTimeEnd(DayType dayWeek, ShiftType shiftType,
+    boolean existsByDayWeekAndShiftTypeAndStartTimeAndEndTime(DayType dayWeek, ShiftType shiftType,
                                                               LocalTime startTime, LocalTime timeEnd);
 
 }

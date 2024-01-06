@@ -43,7 +43,7 @@ public class ScheduleController {
             return new ResponseEntity<>("The shift type entered is not a valid type.", HttpStatus.FORBIDDEN);
         }
 
-        if (scheduleRepository.existsByDayWeekAndShiftTypeAndStartTimeAndTimeEnd(DayType.valueOf(newScheduleApp.dayWeek()),
+        if (scheduleRepository.existsByDayWeekAndShiftTypeAndStartTimeAndEndTime(DayType.valueOf(newScheduleApp.dayWeek()),
                 ShiftType.valueOf(newScheduleApp.shiftType()), newScheduleApp.startTime(), newScheduleApp.timeEnd())) {
             return new ResponseEntity<>("This schedule already exists. Please create another one.",
                     HttpStatus.FORBIDDEN);

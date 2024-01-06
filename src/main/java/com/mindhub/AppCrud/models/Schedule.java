@@ -19,7 +19,7 @@ public class Schedule {
 
     private ShiftType shiftType;
 
-    private LocalTime startTime, timeEnd;
+    private LocalTime startTime, endTime;
 
     @OneToMany(mappedBy = "schedule", fetch = FetchType.EAGER)
     private Set<CourseSchedule> courseSchedules = new HashSet<>();
@@ -29,11 +29,11 @@ public class Schedule {
     public Schedule() {
     }
 
-    public Schedule(DayType dayWeek, ShiftType shiftType, LocalTime startTime, LocalTime timeEnd) {
+    public Schedule(DayType dayWeek, ShiftType shiftType, LocalTime startTime, LocalTime endTime) {
         this.dayWeek = dayWeek;
         this.shiftType = shiftType;
         this.startTime = startTime;
-        this.timeEnd = timeEnd;
+        this.endTime = endTime;
     }
 
     // Accessory methods
@@ -66,12 +66,12 @@ public class Schedule {
         this.startTime = startTime;
     }
 
-    public LocalTime getTimeEnd() {
-        return timeEnd;
+    public LocalTime getEndTime() {
+        return endTime;
     }
 
-    public void setTimeEnd(LocalTime timeEnd) {
-        this.timeEnd = timeEnd;
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 
     public int getMaximumCourses() {
