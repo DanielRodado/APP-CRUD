@@ -1,4 +1,4 @@
-package com.mindhub.AppCrud.Controllers;
+package com.mindhub.AppCrud.controllers;
 
 import com.mindhub.AppCrud.DTO.NewTeacherApplicationDTO;
 import com.mindhub.AppCrud.DTO.TeacherDTO;
