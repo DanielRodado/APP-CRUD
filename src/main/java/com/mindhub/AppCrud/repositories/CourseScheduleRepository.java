@@ -17,4 +17,8 @@ public interface CourseScheduleRepository extends JpaRepository<CourseSchedule, 
     Set<Course> findCoursesByScheduleStartTimeBetween(@Param("start") LocalTime startTime,
                                                       @Param("end") LocalTime endTime);
 
+    @Query("SELECT cs.course FROM CourseSchedule cs WHERE cs.schedule.endTime BETWEEN :start AND :end")
+    Set<Course> findCoursesByScheduleEndTimeBetween(@Param("start") LocalTime startTime,
+                                                      @Param("end") LocalTime endTime);
+
 }
