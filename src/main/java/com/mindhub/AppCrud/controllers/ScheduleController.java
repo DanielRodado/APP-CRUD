@@ -15,6 +15,8 @@ import java.time.LocalTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.mindhub.AppCrud.utils.CourseUtil.checkRangeOfHours;
+
 @RestController
 @RequestMapping("/api")
 public class ScheduleController {
@@ -44,12 +46,12 @@ public class ScheduleController {
         }
 
         if (scheduleRepository.existsByDayWeekAndShiftTypeAndStartTimeAndEndTime(DayType.valueOf(newScheduleApp.dayWeek()),
-                ShiftType.valueOf(newScheduleApp.shiftType()), newScheduleApp.startTime(), newScheduleApp.timeEnd())) {
+                ShiftType.valueOf(newScheduleApp.shiftType()), newScheduleApp.startTime(), newScheduleApp.endTime())) {
             return new ResponseEntity<>("This schedule already exists. Please create another one.",
                     HttpStatus.FORBIDDEN);
         }
 
-        if (newScheduleApp.startTime().equals(newScheduleApp.timeEnd())) {
+        if (newScheduleApp.startTime().equals(newScheduleApp.endTime())) {
             return new ResponseEntity<>("The start time cannot be the same as the end time.", HttpStatus.FORBIDDEN);
         }
 
@@ -57,12 +59,16 @@ public class ScheduleController {
             return new ResponseEntity<>("The start time cannot be before 8:00 hrs.", HttpStatus.FORBIDDEN);
         }
 
-        if (newScheduleApp.timeEnd().isAfter(LocalTime.of(21, 30))) {
+        if (newScheduleApp.endTime().isAfter(LocalTime.of(21, 30))) {
             return new ResponseEntity<>("The end time cannot be later than 21:30 hrs.", HttpStatus.FORBIDDEN);
         }
 
+        if (checkRangeOfHours(newScheduleApp.startTime(), newScheduleApp.endTime(), 2)) {
+            return new ResponseEntity<>("There must be a minimum of two hours between the start and end time.", HttpStatus.FORBIDDEN);
+        }
+
         Schedule schedule = new Schedule(DayType.valueOf(newScheduleApp.dayWeek()), ShiftType.valueOf(newScheduleApp.shiftType()),
-                newScheduleApp.startTime(), newScheduleApp.timeEnd());
+                newScheduleApp.startTime(), newScheduleApp.endTime());
 
         scheduleRepository.save(schedule);
 
