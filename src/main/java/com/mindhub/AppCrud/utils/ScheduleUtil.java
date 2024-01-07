@@ -1,5 +1,7 @@
 package com.mindhub.AppCrud.utils;
 
+import com.mindhub.AppCrud.models.ShiftType;
+
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
@@ -15,6 +17,16 @@ public final class ScheduleUtil {
      * */
     public static boolean checkRangeOfHours(LocalTime startTime, LocalTime endTime, int rangeOfDifference) {
         return Math.abs(ChronoUnit.HOURS.between(startTime, endTime)) < rangeOfDifference;
+    }
+
+    public static boolean checkRangeHourWithTypeDay(LocalTime time, ShiftType shiftType) {
+
+        if (time.isBefore(LocalTime.of(12, 0)) && shiftType.toString().equals("MORNING")) return true;
+
+        if (time.isBefore(LocalTime.of(18, 30)) && shiftType.toString().equals("AFTERNOON")) return true;
+
+        return time.isBefore(LocalTime.of(21, 30)) && shiftType.toString().equals("EVENING");
+
     }
 
 }

@@ -15,7 +15,8 @@ import java.time.LocalTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.mindhub.AppCrud.utils.CourseUtil.checkRangeOfHours;
+import static com.mindhub.AppCrud.utils.ScheduleUtil.checkRangeHourWithTypeDay;
+import static com.mindhub.AppCrud.utils.ScheduleUtil.checkRangeOfHours;
 
 @RestController
 @RequestMapping("/api")
@@ -59,12 +60,25 @@ public class ScheduleController {
             return new ResponseEntity<>("The start time cannot be before 8:00 hrs.", HttpStatus.FORBIDDEN);
         }
 
+        if (newScheduleApp.startTime().isAfter(newScheduleApp.endTime())) {
+            return new ResponseEntity<>("The start time cannot be after the end time.", HttpStatus.FORBIDDEN);
+        }
+
         if (newScheduleApp.endTime().isAfter(LocalTime.of(21, 30))) {
             return new ResponseEntity<>("The end time cannot be later than 21:30 hrs.", HttpStatus.FORBIDDEN);
         }
 
+        if (newScheduleApp.endTime().isBefore(newScheduleApp.startTime())) {
+            return new ResponseEntity<>("The end time cannot be earlier than the start time.", HttpStatus.FORBIDDEN);
+        }
+
         if (checkRangeOfHours(newScheduleApp.startTime(), newScheduleApp.endTime(), 2)) {
             return new ResponseEntity<>("There must be a minimum of two hours between the start and end time.", HttpStatus.FORBIDDEN);
+        }
+
+        if (!(checkRangeHourWithTypeDay(newScheduleApp.startTime(), ShiftType.valueOf(newScheduleApp.shiftType()))
+                && checkRangeHourWithTypeDay(newScheduleApp.endTime(), ShiftType.valueOf(newScheduleApp.shiftType())))) {
+            return new ResponseEntity<>("The start and end time must match the shift type.", HttpStatus.FORBIDDEN);
         }
 
         Schedule schedule = new Schedule(DayType.valueOf(newScheduleApp.dayWeek()), ShiftType.valueOf(newScheduleApp.shiftType()),
