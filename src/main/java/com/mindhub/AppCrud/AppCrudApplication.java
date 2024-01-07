@@ -89,6 +89,9 @@ public class AppCrudApplication {
 			Student studentTwo = new Student("Alfredo", "Orozco", "alfred@gmail.com", "pass123");
 			studentRepository.save(studentTwo);
 
+			Student studentThree = new Student("Felipe", "Risaralda", "felpr@gmail.com", "pass123");
+			studentRepository.save(studentThree);
+
 			// StudentCourses
 
 			StudentCourse studentCourseOne = new StudentCourse(LocalDate.now());
