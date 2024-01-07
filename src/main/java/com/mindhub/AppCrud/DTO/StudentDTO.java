@@ -20,7 +20,8 @@ public class StudentDTO {
         this.firstName = student.getFirstName();
         this.lastName = student.getLastName();
         this.email = student.getEmail();
-        this.courses = student.getStudentCourses().stream().map(StudentCourseDTO::new).collect(Collectors.toSet());
+        this.courses =
+                student.getStudentCourses().stream().filter(StudentCourse::getActive).map(StudentCourseDTO::new).collect(Collectors.toSet());
     }
 
     public String getId() {

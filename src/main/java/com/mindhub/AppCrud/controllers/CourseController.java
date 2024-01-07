@@ -3,6 +3,7 @@ package com.mindhub.AppCrud.controllers;
 import com.mindhub.AppCrud.DTO.CourseDTO;
 import com.mindhub.AppCrud.models.Course;
 import com.mindhub.AppCrud.models.StudentCourse;
+import com.mindhub.AppCrud.models.subClass.Student;
 import com.mindhub.AppCrud.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -65,8 +66,8 @@ public class CourseController {
         return new ResponseEntity<>("Course added to the teacher", HttpStatus.OK);
     }
 
-    @PatchMapping("/courses/teachers/delete")
-    public ResponseEntity<String> deleteTeacherToCourse(@RequestParam String courseId) {
+    @PatchMapping("/courses/teachers/remove")
+    public ResponseEntity<String> removeTeacherToCourse(@RequestParam String courseId) {
 
         if (!courseRepository.existsById(courseId)) {
             return new ResponseEntity<>("The course does not exist", HttpStatus.FORBIDDEN);
@@ -98,6 +99,32 @@ public class CourseController {
         studentCourseRepository.save(studentCourse);
 
         return new ResponseEntity<>("Student added to course!", HttpStatus.CREATED);
+    }
+
+    @PatchMapping("/courses/students/remove")
+    public ResponseEntity<String> removeCourseToStudent(@RequestParam String studentId, @RequestParam String courseId) {
+
+        if (!studentRepository.existsById(studentId)) {
+            return new ResponseEntity<>("Student not found.", HttpStatus.FORBIDDEN);
+        }
+
+        if (!courseRepository.existsById(courseId)) {
+            return new ResponseEntity<>("Course not found.", HttpStatus.FORBIDDEN);
+        }
+
+        Student student = studentRepository.findById(studentId).orElse(null);
+        Course course = courseRepository.findById(courseId).orElse(null);
+
+        if (!studentCourseRepository.existsByStudentAndCourse(student, course)) {
+            return new ResponseEntity<>("The student is not in the course.", HttpStatus.FORBIDDEN);
+        }
+
+        studentCourseRepository.softDeleteStudentCourse(student, course);
+
+        return new ResponseEntity<>("Course removed to student!", HttpStatus.OK);
+
+
+
     }
 
     @GetMapping("/courses/schedules/start-time-range")

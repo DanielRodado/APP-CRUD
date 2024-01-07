@@ -16,6 +16,8 @@ public class StudentCourse {
 
     private LocalDate dateOfEntry;
 
+    private Boolean isActive = true;
+
     @ManyToOne
     private Student student;
 
@@ -43,6 +45,14 @@ public class StudentCourse {
 
     public void setDateOfEntry(LocalDate dateOfEntry) {
         this.dateOfEntry = dateOfEntry;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
     }
 
     public Student getStudent() {
