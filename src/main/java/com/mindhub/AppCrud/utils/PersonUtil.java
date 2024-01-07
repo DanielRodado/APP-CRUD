@@ -1,9 +1,9 @@
 package com.mindhub.AppCrud.utils;
 
-public final class TeacherUtil {
+public final class PersonUtil {
 
-    public static boolean verifyEmailTeacher(String teacherEmail) {
-        return teacherEmail.matches(".*@mentor\\.com$");
+    public static boolean verifyEmailByType(String teacherEmail, String typeEmail) {
+        return teacherEmail.matches(".*@"+typeEmail+"\\.com$");
     }
 
 }

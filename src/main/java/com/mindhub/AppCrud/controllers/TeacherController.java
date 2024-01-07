@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.mindhub.AppCrud.utils.TeacherUtil.verifyEmailTeacher;
+import static com.mindhub.AppCrud.utils.PersonUtil.verifyEmailByType;
 
 @RestController
 @RequestMapping("/api")
@@ -51,7 +51,7 @@ public class TeacherController {
             return new ResponseEntity<>("This e-mail is registered", HttpStatus.FORBIDDEN);
         }
 
-        if (!verifyEmailTeacher(newTeacherApp.email())) {
+        if (!verifyEmailByType(newTeacherApp.email(), "mentor")) {
             return new ResponseEntity<>("The email must have an '@'; 'mentor', after the '@'; '.com', after 'mentor';" +
                     " and no characters after the '.com'", HttpStatus.FORBIDDEN);
         }
