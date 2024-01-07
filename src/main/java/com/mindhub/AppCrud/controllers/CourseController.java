@@ -2,14 +2,14 @@ package com.mindhub.AppCrud.controllers;
 
 import com.mindhub.AppCrud.DTO.CourseDTO;
 import com.mindhub.AppCrud.models.Course;
-import com.mindhub.AppCrud.repositories.CourseRepository;
-import com.mindhub.AppCrud.repositories.CourseScheduleRepository;
-import com.mindhub.AppCrud.repositories.TeacherRepository;
+import com.mindhub.AppCrud.models.StudentCourse;
+import com.mindhub.AppCrud.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,7 +24,13 @@ public class CourseController {
     private TeacherRepository teacherRepository;
 
     @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private StudentCourseRepository studentCourseRepository;
 
     @Autowired
     private CourseScheduleRepository courseScheduleRepository;
@@ -73,6 +79,25 @@ public class CourseController {
         courseRepository.deleteCourseToTeacherById(courseId);
 
         return new ResponseEntity<>("Teacher removed from the course", HttpStatus.OK);
+    }
+
+    @PostMapping("/courses/students/add")
+    public ResponseEntity<String> addCourseToStudent(@RequestParam String studentId, @RequestParam String courseId) {
+
+        if (!studentRepository.existsById(studentId)) {
+            return new ResponseEntity<>("Student not found", HttpStatus.FORBIDDEN);
+        }
+
+        if (!courseRepository.existsById(courseId)) {
+            return new ResponseEntity<>("Course not found", HttpStatus.FORBIDDEN);
+        }
+
+        StudentCourse studentCourse = new StudentCourse(LocalDate.now());
+        studentCourse.setStudent(studentRepository.findById(studentId).orElse(null));
+        studentCourse.setCourse(courseRepository.findById(courseId).orElse(null));
+        studentCourseRepository.save(studentCourse);
+
+        return new ResponseEntity<>("Student added to course!", HttpStatus.CREATED);
     }
 
     @GetMapping("/courses/schedules/start-time-range")
