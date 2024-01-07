@@ -14,7 +14,7 @@ import java.time.LocalTime;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.mindhub.AppCrud.utils.CourseUtil.checkRangeOfHours;
+import static com.mindhub.AppCrud.utils.ScheduleUtil.checkRangeOfHours;
 
 @RestController
 @RequestMapping("/api")

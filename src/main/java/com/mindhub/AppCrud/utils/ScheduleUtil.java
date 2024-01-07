@@ -3,7 +3,7 @@ package com.mindhub.AppCrud.utils;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 
-public final class CourseUtil {
+public final class ScheduleUtil {
 
     /**
      * This method receives three arguments to compare and know if it meets a time difference between the first two arguments.
