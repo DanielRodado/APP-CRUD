@@ -83,13 +83,13 @@ public class AppCrudApplication {
 
 			// Students
 
-			Student studentOne = new Student("Esteban", "Girardot", "estebang@estudent.com", "student123");
+			Student studentOne = new Student("Esteban", "Girardot", "estebang@student.com", "student123");
 			studentRepository.save(studentOne);
 
-			Student studentTwo = new Student("Alfredo", "Orozco", "alfred@gmail.com", "pass123");
+			Student studentTwo = new Student("Alfredo", "Orozco", "alfred@student.com", "student123");
 			studentRepository.save(studentTwo);
 
-			Student studentThree = new Student("Felipe", "Risaralda", "felpr@gmail.com", "pass123");
+			Student studentThree = new Student("Felipe", "Risaralda", "felpr@student.com", "student123");
 			studentRepository.save(studentThree);
 
 			// StudentCourses
