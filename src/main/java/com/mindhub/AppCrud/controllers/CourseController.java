@@ -1,7 +1,9 @@
 package com.mindhub.AppCrud.controllers;
 
 import com.mindhub.AppCrud.DTO.CourseDTO;
+import com.mindhub.AppCrud.DTO.NewCourseApplicationDTO;
 import com.mindhub.AppCrud.models.Course;
+import com.mindhub.AppCrud.models.CourseSchedule;
 import com.mindhub.AppCrud.models.StudentCourse;
 import com.mindhub.AppCrud.models.subClass.Student;
 import com.mindhub.AppCrud.repositories.*;
@@ -9,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -32,6 +35,9 @@ public class CourseController {
     private CourseRepository courseRepository;
 
     @Autowired
+    private ScheduleRepository scheduleRepository;
+
+    @Autowired
     private StudentCourseRepository studentCourseRepository;
 
     @Autowired
@@ -45,6 +51,41 @@ public class CourseController {
     @GetMapping("/courses/teachers/unassigned")
     public Set<CourseDTO> getCoursesNotTeacher() {
         return courseRepository.findByTeacherIsNull().stream().map(CourseDTO::new).collect(Collectors.toSet());
+    }
+
+
+    @PostMapping("/courses")
+    public ResponseEntity<String> createNewCourse(@RequestBody NewCourseApplicationDTO newCourseApp) {
+
+        try {
+            if (!teacherRepository.existsById(newCourseApp.teacherId())) {
+                return new ResponseEntity<>("Teacher not found", HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception ignored){}
+
+        for (String scheduleId :newCourseApp.idSchedules()) {
+            if (!scheduleRepository.existsById(scheduleId)) {
+                return new ResponseEntity<>("One of the schedules could not be found", HttpStatus.NOT_FOUND);
+            }
+        }
+
+        Course course = new Course(newCourseApp.name(), newCourseApp.place());
+        course.setTeacher(newCourseApp.teacherId() != null
+                ? teacherRepository.findById(newCourseApp.teacherId()).orElse(null)
+                :null);
+        courseRepository.save(course);
+
+        for (String scheduleId :newCourseApp.idSchedules()) {
+
+            CourseSchedule courseSchedule = new CourseSchedule();
+            courseSchedule.setCourse(course);
+            courseSchedule.setSchedule(scheduleRepository.findById(scheduleId).orElse(null));
+            courseScheduleRepository.save(courseSchedule);
+
+        }
+
+        return new ResponseEntity<>("Course created!", HttpStatus.CREATED);
+
     }
 
     @PatchMapping("/teachers/current/remove/courses")
