@@ -51,7 +51,7 @@ public class AdminController {
     }
 
     @PatchMapping("/admin/remove/teachers/courses")
-    public ResponseEntity<String> removeTeacherToCourse(@RequestParam String courseId) {
+    public ResponseEntity<String> removeTeacherFromCourse(@RequestParam String courseId) {
 
         if (!courseRepository.existsById(courseId)) {
             return new ResponseEntity<>("The course does not exist", HttpStatus.FORBIDDEN);
@@ -86,7 +86,8 @@ public class AdminController {
     }
 
     @PatchMapping("/admin/remove/students/courses")
-    public ResponseEntity<String> removeStudentToCourse(@RequestParam String studentId, @RequestParam String courseId) {
+    public ResponseEntity<String> removeStudentFromCourse(@RequestParam String studentId,
+                                                         @RequestParam String courseId) {
 
         if (!studentRepository.existsById(studentId)) {
             return new ResponseEntity<>("Student not found.", HttpStatus.FORBIDDEN);

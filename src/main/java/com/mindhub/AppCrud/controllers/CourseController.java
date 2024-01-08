@@ -48,7 +48,8 @@ public class CourseController {
     }
 
     @PatchMapping("/teachers/current/remove/courses")
-    public ResponseEntity<String> deleteCourseToTeacher(Authentication teacherCurrent, @RequestParam String courseId) {
+    public ResponseEntity<String> removeCourseFromTeacher(Authentication teacherCurrent,
+                                                          @RequestParam String courseId) {
 
         if (!courseRepository.existsById(courseId)) {
             return new ResponseEntity<>("The course does not exist", HttpStatus.FORBIDDEN);
@@ -84,7 +85,8 @@ public class CourseController {
     }
 
     @PatchMapping("/students/current/remove/courses")
-    public ResponseEntity<String> removeCourseToStudent(Authentication studentCurrent, @RequestParam String courseId) {
+    public ResponseEntity<String> removeCourseFromStudent(Authentication studentCurrent,
+                                                          @RequestParam String courseId) {
 
         if (!studentRepository.existsByEmail(studentCurrent.getName())) {
             return new ResponseEntity<>("Student not found.", HttpStatus.FORBIDDEN);
