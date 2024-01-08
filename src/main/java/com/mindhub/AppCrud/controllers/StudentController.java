@@ -31,6 +31,17 @@ public class StudentController {
         return studentRepository.findAll().stream().map(StudentDTO::new).collect(Collectors.toSet());
     }
 
+    @GetMapping("/students/first-name/containing/{letter}")
+    public ResponseEntity<Object> getAllStudentsDTOIfFirstNameContaining(@PathVariable String letter) {
+
+        Set<Student> students = studentRepository.findByFirstNameContainingIgnoreCase(letter);
+
+        return students.isEmpty()
+                ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+                : new ResponseEntity<>(students.stream().map(StudentDTO::new).collect(Collectors.toSet()), HttpStatus.OK);
+
+    }
+
     @PostMapping("/students")
     public ResponseEntity<String> createNewStudent(@RequestBody NewPersonApplicationDTO newStudentApp) {
 
