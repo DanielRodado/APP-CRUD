@@ -20,6 +20,8 @@ public interface CourseScheduleRepository extends JpaRepository<CourseSchedule, 
     Set<Course> findCoursesByScheduleEndTimeBetween(@Param("start") LocalTime startTime,
                                                       @Param("end") LocalTime endTime);
 
+    Set<CourseSchedule> findBySchedule(Schedule schedule);
+
     byte countBySchedule(Schedule schedule);
 
     byte countByCourse(Course course);

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 public class Schedule {
@@ -92,4 +93,9 @@ public class Schedule {
         this.courseSchedules.add(courseSchedule);
         courseSchedule.setSchedule(this);
     }
+
+    public Set<Course> getCourses() {
+        return this.courseSchedules.stream().map(CourseSchedule::getCourse).collect(Collectors.toSet());
+    }
+
 }
