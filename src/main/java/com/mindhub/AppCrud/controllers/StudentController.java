@@ -49,13 +49,13 @@ public class StudentController {
             return new ResponseEntity<>("The mail cannot be empty", HttpStatus.FORBIDDEN);
         }
 
-        if (studentRepository.existsByEmail(newStudentApp.email().toLowerCase())) {
-            return new ResponseEntity<>("This e-mail is registered", HttpStatus.FORBIDDEN);
-        }
-
         if (!verifyEmailByType(newStudentApp.email(), "student")) {
             return new ResponseEntity<>("The email must have an '@'; 'student', after the '@'; '.com', after 'student';" +
                     " and no characters after the '.com'", HttpStatus.FORBIDDEN);
+        }
+
+        if (studentRepository.existsByEmail(newStudentApp.email().toLowerCase())) {
+            return new ResponseEntity<>("This e-mail is registered", HttpStatus.FORBIDDEN);
         }
 
         if (newStudentApp.firstName().isBlank()) {
