@@ -1,21 +1,29 @@
 package com.mindhub.AppCrud.controllers;
 
+import com.mindhub.AppCrud.DTO.NewPersonApplicationDTO;
 import com.mindhub.AppCrud.models.Course;
 import com.mindhub.AppCrud.models.CourseSchedule;
 import com.mindhub.AppCrud.models.Schedule;
 import com.mindhub.AppCrud.models.StudentCourse;
+import com.mindhub.AppCrud.models.subClass.Admin;
 import com.mindhub.AppCrud.models.subClass.Student;
 import com.mindhub.AppCrud.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
+import static com.mindhub.AppCrud.utils.PersonUtil.verifyEmailByType;
+
 @RestController
 @RequestMapping("/api")
 public class AdminController {
+
+    @Autowired
+    private AdminRepository adminRepository;
 
     @Autowired
     private TeacherRepository teacherRepository;
@@ -27,6 +35,9 @@ public class AdminController {
     private CourseRepository courseRepository;
 
     @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
     private ScheduleRepository scheduleRepository;
 
     @Autowired
@@ -34,6 +45,38 @@ public class AdminController {
 
     @Autowired
     private StudentCourseRepository studentCourseRepository;
+
+    @PostMapping("/admin")
+    public ResponseEntity<String> createNewStudent(@RequestBody NewPersonApplicationDTO newAdminApp) {
+
+        if (newAdminApp.email().isBlank()) {
+            return new ResponseEntity<>("The mail cannot be empty", HttpStatus.FORBIDDEN);
+        }
+
+        if (!verifyEmailByType(newAdminApp.email(), "admin")) {
+            return new ResponseEntity<>("The email must have an '@'; 'admin', after the '@'; '.com', after 'admin';" +
+                    " and no characters after the '.com'", HttpStatus.FORBIDDEN);
+        }
+
+        if (studentRepository.existsByEmail(newAdminApp.email().toLowerCase())) {
+            return new ResponseEntity<>("This e-mail is registered", HttpStatus.FORBIDDEN);
+        }
+
+        if (newAdminApp.firstName().isBlank()) {
+            return new ResponseEntity<>("This e-mail is registered", HttpStatus.FORBIDDEN);
+        }
+
+        if (newAdminApp.lastName().isBlank()) {
+            return new ResponseEntity<>("This e-mail is registered", HttpStatus.FORBIDDEN);
+        }
+
+        Admin admin = new Admin(newAdminApp.firstName(), newAdminApp.lastName(), newAdminApp.email().toLowerCase(),
+                passwordEncoder.encode(newAdminApp.password()));
+        adminRepository.save(admin);
+
+        return new ResponseEntity<>("Admin created!", HttpStatus.CREATED);
+
+    }
 
     @PatchMapping("/admin/add/schedules/courses")
     public ResponseEntity<String> addScheduleToCourse(@RequestParam String scheduleId, @RequestParam String courseId) {
