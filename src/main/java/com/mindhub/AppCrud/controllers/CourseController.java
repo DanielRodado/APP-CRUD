@@ -63,6 +63,10 @@ public class CourseController {
 
         if (schedules != null) {
 
+            if (schedules.size() >= 2) {
+                return new ResponseEntity<>("Courses can only have two schedules.", HttpStatus.NOT_FOUND);
+            }
+
             for (String scheduleId : newCourseApp.idSchedules()) {
 
                 if (!scheduleRepository.existsById(scheduleId)) {

@@ -1,12 +1,11 @@
 package com.mindhub.AppCrud.controllers;
 
 import com.mindhub.AppCrud.models.Course;
+import com.mindhub.AppCrud.models.CourseSchedule;
+import com.mindhub.AppCrud.models.Schedule;
 import com.mindhub.AppCrud.models.StudentCourse;
 import com.mindhub.AppCrud.models.subClass.Student;
-import com.mindhub.AppCrud.repositories.CourseRepository;
-import com.mindhub.AppCrud.repositories.StudentCourseRepository;
-import com.mindhub.AppCrud.repositories.StudentRepository;
-import com.mindhub.AppCrud.repositories.TeacherRepository;
+import com.mindhub.AppCrud.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,53 @@ public class AdminController {
     private CourseRepository courseRepository;
 
     @Autowired
+    private ScheduleRepository scheduleRepository;
+
+    @Autowired
+    private CourseScheduleRepository courseScheduleRepository;
+
+    @Autowired
     private StudentCourseRepository studentCourseRepository;
+
+    @PatchMapping("/admin/add/schedules/courses")
+    public ResponseEntity<String> addScheduleToCourse(@RequestParam String scheduleId, @RequestParam String courseId) {
+
+        if (!courseRepository.existsById(courseId)) {
+            return new ResponseEntity<>("No schedule found.", HttpStatus.NOT_FOUND);
+        }
+
+        if (!scheduleRepository.existsById(scheduleId)) {
+            return new ResponseEntity<>("No schedule found.", HttpStatus.NOT_FOUND);
+        }
+
+        Course course = courseRepository.findById(courseId).orElse(null);
+        Schedule schedule = scheduleRepository.findById(scheduleId).orElse(null);
+
+        if (courseScheduleRepository.existsByCourseAndSchedule(course, schedule)) {
+            return new ResponseEntity<>("The course already has this schedule.", HttpStatus.FORBIDDEN);
+        }
+
+        if (courseScheduleRepository.existsByCourseAndSchedule_DayWeekAndSchedule_ShiftType(
+                course, schedule.getDayWeek(), schedule.getShiftType())) {
+            return new ResponseEntity<>("A course cannot have two schedules in the same shift on the same day.", HttpStatus.FORBIDDEN);
+        }
+
+        if (courseScheduleRepository.countByCourse(course) >= 2) {
+            return new ResponseEntity<>("Courses can only have two schedules.", HttpStatus.NOT_FOUND);
+        }
+
+        if (courseScheduleRepository.countBySchedule(schedule) >= 5) {
+            return new ResponseEntity<>("There can only be five simultaneous courses per schedule.", HttpStatus.FORBIDDEN);
+        }
+
+        CourseSchedule courseSchedule = new CourseSchedule();
+        courseSchedule.setSchedule(schedule);
+        courseSchedule.setCourse(course);
+        courseScheduleRepository.save(courseSchedule);
+
+        return new ResponseEntity<>("Schedule added to course", HttpStatus.OK);
+
+    }
 
     @PatchMapping("/admin/add/courses/teachers")
     public ResponseEntity<String> addCourseToTeacher(@RequestParam String teacherId, @RequestParam String courseId) {
@@ -66,7 +111,7 @@ public class AdminController {
         return new ResponseEntity<>("Teacher removed from the course", HttpStatus.OK);
     }
 
-    @PostMapping("/admin/add/students/courses")
+    @PatchMapping("/admin/add/students/courses")
     public ResponseEntity<String> addStudentToCourse(@RequestParam String studentId, @RequestParam String courseId) {
 
         if (!studentRepository.existsById(studentId)) {

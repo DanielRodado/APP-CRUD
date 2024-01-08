@@ -1,8 +1,6 @@
 package com.mindhub.AppCrud.repositories;
 
-import com.mindhub.AppCrud.models.Course;
-import com.mindhub.AppCrud.models.CourseSchedule;
-import com.mindhub.AppCrud.models.Schedule;
+import com.mindhub.AppCrud.models.*;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,5 +21,11 @@ public interface CourseScheduleRepository extends JpaRepository<CourseSchedule, 
                                                       @Param("end") LocalTime endTime);
 
     byte countBySchedule(Schedule schedule);
+
+    byte countByCourse(Course course);
+
+    boolean existsByCourseAndSchedule(Course course, Schedule schedule);
+
+    boolean existsByCourseAndSchedule_DayWeekAndSchedule_ShiftType(Course course, DayType dayWeek, ShiftType shiftType);
 
 }
