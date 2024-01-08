@@ -8,6 +8,7 @@ import com.mindhub.AppCrud.repositories.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -46,65 +47,46 @@ public class CourseController {
         return courseRepository.findByTeacherIsNull().stream().map(CourseDTO::new).collect(Collectors.toSet());
     }
 
-    @PatchMapping("/courses/teachers/add")
-    public ResponseEntity<String> addCourseToTeacher(@RequestParam String teacherId, @RequestParam String courseId) {
+    @PatchMapping("/teachers/current/remove/courses")
+    public ResponseEntity<String> deleteCourseToTeacher(Authentication teacherCurrent, @RequestParam String courseId) {
 
         if (!courseRepository.existsById(courseId)) {
             return new ResponseEntity<>("The course does not exist", HttpStatus.FORBIDDEN);
         }
 
-        if (!teacherRepository.existsById(teacherId)) {
+        if (!teacherRepository.existsByEmail(teacherCurrent.getName())) {
             return new ResponseEntity<>("The teacher does not exist", HttpStatus.FORBIDDEN);
         }
 
-        if (courseRepository.existsByIdAndTeacherIsNotNull(courseId)) {
-            return new ResponseEntity<>("This course already has a teacher", HttpStatus.FORBIDDEN);
+        if (!courseRepository.existsByIdAndTeacher(courseId, teacherRepository.findByEmail(teacherCurrent.getName()))) {
+            return new ResponseEntity<>("The course does not belong to the teacher", HttpStatus.FORBIDDEN);
         }
 
-        courseRepository.addCourseToTeacherById(teacherRepository.findById(teacherId).orElse(null), courseId);
+        courseRepository.removeCourseToTeacherById(courseId);
 
-        return new ResponseEntity<>("Course added to the teacher", HttpStatus.OK);
+        return new ResponseEntity<>("Course removed!", HttpStatus.OK);
     }
 
-    @PatchMapping("/courses/teachers/remove")
-    public ResponseEntity<String> removeTeacherToCourse(@RequestParam String courseId) {
-
-        if (!courseRepository.existsById(courseId)) {
-            return new ResponseEntity<>("The course does not exist", HttpStatus.FORBIDDEN);
-        }
-
-        if (!courseRepository.existsByIdAndTeacherIsNotNull(courseId)) {
-            return new ResponseEntity<>("This course does not have a teacher", HttpStatus.FORBIDDEN);
-        }
-
-        courseRepository.deleteCourseToTeacherById(courseId);
-
-        return new ResponseEntity<>("Teacher removed from the course", HttpStatus.OK);
-    }
-
-    @PostMapping("/courses/students/add")
-    public ResponseEntity<String> addCourseToStudent(@RequestParam String studentId, @RequestParam String courseId) {
-
-        if (!studentRepository.existsById(studentId)) {
-            return new ResponseEntity<>("Student not found", HttpStatus.FORBIDDEN);
-        }
+    @PostMapping("/students/current/add/courses")
+    public ResponseEntity<String> addCourseToStudent(Authentication studentCurrent, @RequestParam String courseId) {
 
         if (!courseRepository.existsById(courseId)) {
             return new ResponseEntity<>("Course not found", HttpStatus.FORBIDDEN);
         }
 
         StudentCourse studentCourse = new StudentCourse(LocalDate.now());
-        studentCourse.setStudent(studentRepository.findById(studentId).orElse(null));
+        studentCourse.setStudent(studentRepository.findByEmail(studentCurrent.getName()));
         studentCourse.setCourse(courseRepository.findById(courseId).orElse(null));
         studentCourseRepository.save(studentCourse);
 
-        return new ResponseEntity<>("Student added to course!", HttpStatus.CREATED);
+        return new ResponseEntity<>("Course add!", HttpStatus.CREATED);
+
     }
 
-    @PatchMapping("/courses/students/remove")
-    public ResponseEntity<String> removeCourseToStudent(@RequestParam String studentId, @RequestParam String courseId) {
+    @PatchMapping("/students/current/remove/courses")
+    public ResponseEntity<String> removeCourseToStudent(Authentication studentCurrent, @RequestParam String courseId) {
 
-        if (!studentRepository.existsById(studentId)) {
+        if (!studentRepository.existsByEmail(studentCurrent.getName())) {
             return new ResponseEntity<>("Student not found.", HttpStatus.FORBIDDEN);
         }
 
@@ -112,7 +94,7 @@ public class CourseController {
             return new ResponseEntity<>("Course not found.", HttpStatus.FORBIDDEN);
         }
 
-        Student student = studentRepository.findById(studentId).orElse(null);
+        Student student = studentRepository.findByEmail(studentCurrent.getName());
         Course course = courseRepository.findById(courseId).orElse(null);
 
         if (!studentCourseRepository.existsByStudentAndCourse(student, course)) {
@@ -121,9 +103,7 @@ public class CourseController {
 
         studentCourseRepository.softDeleteStudentCourse(student, course);
 
-        return new ResponseEntity<>("Course removed to student!", HttpStatus.OK);
-
-
+        return new ResponseEntity<>("Course removed!", HttpStatus.OK);
 
     }
 

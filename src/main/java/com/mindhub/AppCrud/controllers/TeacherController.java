@@ -76,24 +76,4 @@ public class TeacherController {
         return new ResponseEntity<>("Teacher created!", HttpStatus.CREATED);
     }
 
-    @PatchMapping("/teachers/courses/delete")
-    public ResponseEntity<String> deleteCourseToTeacher(@RequestParam String teacherId, @RequestParam String courseId) {
-
-        if (!courseRepository.existsById(courseId)) {
-            return new ResponseEntity<>("The course does not exist", HttpStatus.FORBIDDEN);
-        }
-
-        if (!teacherRepository.existsById(teacherId)) {
-            return new ResponseEntity<>("The teacher does not exist", HttpStatus.FORBIDDEN);
-        }
-
-        if (!courseRepository.existsByIdAndTeacher(courseId, teacherRepository.findById(teacherId).orElse(null))) {
-            return new ResponseEntity<>("The course does not belong to the teacher", HttpStatus.FORBIDDEN);
-        }
-
-        courseRepository.deleteCourseToTeacherById(courseId);
-
-        return new ResponseEntity<>("Course removed from teacher", HttpStatus.OK);
-    }
-
 }

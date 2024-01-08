@@ -24,7 +24,7 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     @Transactional
     @Modifying
     @Query("UPDATE Course c SET c.teacher = Null WHERE c.id = :courseId")
-    void deleteCourseToTeacherById(@Param("courseId") String courseId);
+    void removeCourseToTeacherById(@Param("courseId") String courseId);
 
     boolean existsByIdAndTeacherIsNotNull(String courseId);
 
