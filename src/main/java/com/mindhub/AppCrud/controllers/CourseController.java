@@ -4,6 +4,7 @@ import com.mindhub.AppCrud.DTO.CourseDTO;
 import com.mindhub.AppCrud.DTO.NewCourseApplicationDTO;
 import com.mindhub.AppCrud.models.Course;
 import com.mindhub.AppCrud.models.CourseSchedule;
+import com.mindhub.AppCrud.models.Schedule;
 import com.mindhub.AppCrud.models.StudentCourse;
 import com.mindhub.AppCrud.models.subClass.Student;
 import com.mindhub.AppCrud.repositories.*;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -57,17 +59,31 @@ public class CourseController {
     @PostMapping("/courses")
     public ResponseEntity<String> createNewCourse(@RequestBody NewCourseApplicationDTO newCourseApp) {
 
+        Set<Schedule> schedules = newCourseApp.idSchedules() != null ? new HashSet<>() : null;
+
+        if (schedules != null) {
+
+            for (String scheduleId : newCourseApp.idSchedules()) {
+
+                if (!scheduleRepository.existsById(scheduleId)) {
+                    return new ResponseEntity<>("One of the schedules could not be found", HttpStatus.NOT_FOUND);
+                }
+
+                Schedule schedule = scheduleRepository.findById(scheduleId).orElse(null);
+
+                if (courseScheduleRepository.countBySchedule(schedule) >= 5) {
+                    return new ResponseEntity<>("There can only be five simultaneous courses per schedule.", HttpStatus.FORBIDDEN);
+                }
+
+                schedules.add(schedule);
+            }
+        }
+
         try {
             if (!teacherRepository.existsById(newCourseApp.teacherId())) {
                 return new ResponseEntity<>("Teacher not found", HttpStatus.NOT_FOUND);
             }
         } catch (Exception ignored){}
-
-        for (String scheduleId :newCourseApp.idSchedules()) {
-            if (!scheduleRepository.existsById(scheduleId)) {
-                return new ResponseEntity<>("One of the schedules could not be found", HttpStatus.NOT_FOUND);
-            }
-        }
 
         Course course = new Course(newCourseApp.name(), newCourseApp.place());
         course.setTeacher(newCourseApp.teacherId() != null
@@ -75,13 +91,15 @@ public class CourseController {
                 :null);
         courseRepository.save(course);
 
-        for (String scheduleId :newCourseApp.idSchedules()) {
+        if (schedules != null) {
+            for (Schedule schedule : schedules) {
 
-            CourseSchedule courseSchedule = new CourseSchedule();
-            courseSchedule.setCourse(course);
-            courseSchedule.setSchedule(scheduleRepository.findById(scheduleId).orElse(null));
-            courseScheduleRepository.save(courseSchedule);
+                CourseSchedule courseSchedule = new CourseSchedule();
+                courseSchedule.setCourse(course);
+                courseSchedule.setSchedule(schedule);
+                courseScheduleRepository.save(courseSchedule);
 
+            }
         }
 
         return new ResponseEntity<>("Course created!", HttpStatus.CREATED);

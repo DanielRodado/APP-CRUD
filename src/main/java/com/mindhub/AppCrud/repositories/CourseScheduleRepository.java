@@ -2,6 +2,7 @@ package com.mindhub.AppCrud.repositories;
 
 import com.mindhub.AppCrud.models.Course;
 import com.mindhub.AppCrud.models.CourseSchedule;
+import com.mindhub.AppCrud.models.Schedule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,5 +21,7 @@ public interface CourseScheduleRepository extends JpaRepository<CourseSchedule, 
     @Query("SELECT cs.course FROM CourseSchedule cs WHERE cs.schedule.endTime BETWEEN :start AND :end")
     Set<Course> findCoursesByScheduleEndTimeBetween(@Param("start") LocalTime startTime,
                                                       @Param("end") LocalTime endTime);
+
+    byte countBySchedule(Schedule schedule);
 
 }

@@ -26,7 +26,7 @@ public class StudentCourseDTO {
         this.name = studentCourse.getCourse().getName();
         this.place = studentCourse.getCourse().getPlace();
         this.nameTeacher = studentCourse.getCourse().getTeacher() != null ?
-                studentCourse.getCourse().getTeacher().getFullName() : "No Teacher";
+                studentCourse.getCourse().getTeacher().getFullName() : "";
         this.schedules =
                 studentCourse.getCourse().getCourseSchedules().stream().map(CourseScheduleDTO::new).collect(Collectors.toSet());
         this.dateOfEntry = studentCourse.getDateOfEntry();
