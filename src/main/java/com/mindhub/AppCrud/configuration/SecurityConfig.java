@@ -20,9 +20,20 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/h2-console/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/login").permitAll()
-                .anyRequest().permitAll());
+                .requestMatchers(HttpMethod.POST, "/api/login", "/api/students", "/api/teachers").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/courses", "/api/courses/**", "/api/schedules",
+                                "/api/schedules/courses").authenticated()
+                .requestMatchers(HttpMethod.GET, "/h2-console/**").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/persons", "/api/students", "/api/teachers",
+                                "/api/students/first-name/containing/{letter}").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/admin", "/api/schedules").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/admin/**").hasAuthority("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/teacher/current").hasAuthority("TEACHER")
+                .requestMatchers(HttpMethod.PATCH, "/api/teachers/current/remove/courses").hasAuthority("TEACHER")
+                .requestMatchers(HttpMethod.GET, "/api/students/current").hasAuthority("STUDENT")
+                .requestMatchers(HttpMethod.PATCH, "/api/students/current/add/courses",
+                                "/api/students/current/remove/courses").hasAuthority("STUDENT")
+                .anyRequest().denyAll());
 
         http.csrf(csrf -> csrf.disable());
 
