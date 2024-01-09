@@ -8,11 +8,11 @@ import com.mindhub.AppCrud.models.Schedule;
 import com.mindhub.AppCrud.models.StudentCourse;
 import com.mindhub.AppCrud.models.subClass.Student;
 import com.mindhub.AppCrud.repositories.*;
+import com.mindhub.AppCrud.services.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -34,7 +34,7 @@ public class CourseController {
     private StudentRepository studentRepository;
 
     @Autowired
-    private CourseRepository courseRepository;
+    private CourseService courseService;
 
     @Autowired
     private ScheduleRepository scheduleRepository;
@@ -47,14 +47,13 @@ public class CourseController {
 
     @GetMapping("/courses")
     public Set<CourseDTO> getAllCoursesDTO() {
-        return courseRepository.findAll().stream().map(CourseDTO::new).collect(Collectors.toSet());
+        return courseService.getAllCoursesDTO();
     }
 
     @GetMapping("/courses/teachers/unassigned")
     public Set<CourseDTO> getCoursesNotTeacher() {
-        return courseRepository.findByTeacherIsNull().stream().map(CourseDTO::new).collect(Collectors.toSet());
+        return courseService.getCoursesDTOWithNullTeacher();
     }
-
 
     @PostMapping("/courses")
     public ResponseEntity<String> createNewCourse(@RequestBody NewCourseApplicationDTO newCourseApp) {
@@ -93,7 +92,7 @@ public class CourseController {
         course.setTeacher(newCourseApp.teacherId() != null
                 ? teacherRepository.findById(newCourseApp.teacherId()).orElse(null)
                 :null);
-        courseRepository.save(course);
+        courseService.saveCourse(course);
 
         if (schedules != null) {
             for (Schedule schedule : schedules) {
@@ -114,7 +113,7 @@ public class CourseController {
     public ResponseEntity<String> removeCourseFromTeacher(Authentication teacherCurrent,
                                                           @RequestParam String courseId) {
 
-        if (!courseRepository.existsById(courseId)) {
+        if (!courseService.existsCourseById(courseId)) {
             return new ResponseEntity<>("The course does not exist", HttpStatus.FORBIDDEN);
         }
 
@@ -122,11 +121,11 @@ public class CourseController {
             return new ResponseEntity<>("The teacher does not exist", HttpStatus.FORBIDDEN);
         }
 
-        if (!courseRepository.existsByIdAndTeacher(courseId, teacherRepository.findByEmail(teacherCurrent.getName()))) {
+        if (!courseService.existsCourseByIdAndTeacher(courseId, teacherRepository.findByEmail(teacherCurrent.getName()))) {
             return new ResponseEntity<>("The course does not belong to the teacher", HttpStatus.FORBIDDEN);
         }
 
-        courseRepository.removeCourseToTeacherById(courseId);
+        courseService.removeTeacherFromCourseById(courseId);
 
         return new ResponseEntity<>("Course removed!", HttpStatus.OK);
     }
@@ -134,13 +133,13 @@ public class CourseController {
     @PostMapping("/students/current/add/courses")
     public ResponseEntity<String> addCourseToStudent(Authentication studentCurrent, @RequestParam String courseId) {
 
-        if (!courseRepository.existsById(courseId)) {
+        if (!courseService.existsCourseById(courseId)) {
             return new ResponseEntity<>("Course not found", HttpStatus.FORBIDDEN);
         }
 
         StudentCourse studentCourse = new StudentCourse(LocalDate.now());
         studentCourse.setStudent(studentRepository.findByEmail(studentCurrent.getName()));
-        studentCourse.setCourse(courseRepository.findById(courseId).orElse(null));
+        studentCourse.setCourse(courseService.getCourseById(courseId));
         studentCourseRepository.save(studentCourse);
 
         return new ResponseEntity<>("Course add!", HttpStatus.CREATED);
@@ -155,12 +154,12 @@ public class CourseController {
             return new ResponseEntity<>("Student not found.", HttpStatus.FORBIDDEN);
         }
 
-        if (!courseRepository.existsById(courseId)) {
+        if (!courseService.existsCourseById(courseId)) {
             return new ResponseEntity<>("Course not found.", HttpStatus.FORBIDDEN);
         }
 
         Student student = studentRepository.findByEmail(studentCurrent.getName());
-        Course course = courseRepository.findById(courseId).orElse(null);
+        Course course = courseService.getCourseById(courseId);
 
         if (!studentCourseRepository.existsByStudentAndCourse(student, course)) {
             return new ResponseEntity<>("The student is not in the course.", HttpStatus.FORBIDDEN);

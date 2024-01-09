@@ -19,12 +19,12 @@ public interface CourseRepository extends JpaRepository<Course, String> {
     @Transactional
     @Modifying
     @Query("UPDATE Course c SET c.teacher = :teacherParam WHERE c.id = :courseId")
-    void addCourseToTeacherById(@Param("teacherParam") Teacher teacher, @Param("courseId") String courseId);
+    void addCourseToTeacherById(@Param("courseId") String courseId, @Param("teacherParam") Teacher teacher);
 
     @Transactional
     @Modifying
     @Query("UPDATE Course c SET c.teacher = Null WHERE c.id = :courseId")
-    void removeCourseToTeacherById(@Param("courseId") String courseId);
+    void removeTeacherFromCourseById(@Param("courseId") String courseId);
 
     boolean existsByIdAndTeacherIsNotNull(String courseId);
 

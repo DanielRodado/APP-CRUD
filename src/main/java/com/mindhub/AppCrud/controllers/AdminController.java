@@ -133,7 +133,7 @@ public class AdminController {
             return new ResponseEntity<>("This course already has a teacher", HttpStatus.FORBIDDEN);
         }
 
-        courseRepository.addCourseToTeacherById(teacherRepository.findById(teacherId).orElse(null), courseId);
+        courseRepository.addCourseToTeacherById(courseId, teacherRepository.findById(teacherId).orElse(null));
 
         return new ResponseEntity<>("Course added to the teacher", HttpStatus.OK);
     }
@@ -149,7 +149,7 @@ public class AdminController {
             return new ResponseEntity<>("This course does not have a teacher", HttpStatus.FORBIDDEN);
         }
 
-        courseRepository.removeCourseToTeacherById(courseId);
+        courseRepository.removeTeacherFromCourseById(courseId);
 
         return new ResponseEntity<>("Teacher removed from the course", HttpStatus.OK);
     }
