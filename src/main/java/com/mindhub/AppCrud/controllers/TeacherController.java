@@ -5,6 +5,7 @@ import com.mindhub.AppCrud.DTO.TeacherDTO;
 import com.mindhub.AppCrud.models.subClass.Teacher;
 import com.mindhub.AppCrud.repositories.CourseRepository;
 import com.mindhub.AppCrud.repositories.TeacherRepository;
+import com.mindhub.AppCrud.services.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ import static com.mindhub.AppCrud.utils.PersonUtil.verifyEmailByType;
 public class TeacherController {
 
     @Autowired
-    private TeacherRepository teacherRepository;
+    private TeacherService teacherService;
 
     @Autowired
     private CourseRepository courseRepository;
@@ -32,12 +33,12 @@ public class TeacherController {
 
     @GetMapping("/teachers")
     public Set<TeacherDTO> getAllTeachersDTO() {
-        return teacherRepository.findAll().stream().map(TeacherDTO::new).collect(Collectors.toSet());
+        return teacherService.getAllTeachersDTO();
     }
 
     @GetMapping("/teachers/current")
-    public TeacherDTO getTeacherCurrent(Authentication authentication) {
-        return new TeacherDTO(teacherRepository.findByEmail(authentication.getName()));
+    public TeacherDTO getTeacherCurrent(Authentication teacherCurrent) {
+        return teacherService.getTeacherDTOByEmail(teacherCurrent.getName());
     }
 
     @PostMapping("/teachers")
@@ -52,7 +53,7 @@ public class TeacherController {
                     " and no characters after the '.com'", HttpStatus.FORBIDDEN);
         }
 
-        if (teacherRepository.existsByEmail(newTeacherApp.email())) {
+        if (teacherService.existsTeacherByEmail(newTeacherApp.email())) {
             return new ResponseEntity<>("This e-mail is registered", HttpStatus.FORBIDDEN);
         }
 
@@ -71,7 +72,7 @@ public class TeacherController {
         Teacher teacher = new Teacher(newTeacherApp.firstName(), newTeacherApp.lastName(), newTeacherApp.email(),
                 passwordEncoder.encode(newTeacherApp.password()), newTeacherApp.specializations());
 
-        teacherRepository.save(teacher);
+        teacherService.saveTeacher(teacher);
 
         return new ResponseEntity<>("Teacher created!", HttpStatus.CREATED);
     }

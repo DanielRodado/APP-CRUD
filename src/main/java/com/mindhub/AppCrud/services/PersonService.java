@@ -5,7 +5,7 @@ import com.mindhub.AppCrud.models.Person;
 
 import java.util.Set;
 
-public interface PersonServices {
+public interface PersonService {
 
     Set<Person> getAllPersons();
 
