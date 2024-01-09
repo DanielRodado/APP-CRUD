@@ -9,6 +9,7 @@ import com.mindhub.AppCrud.models.StudentCourse;
 import com.mindhub.AppCrud.models.subClass.Student;
 import com.mindhub.AppCrud.repositories.*;
 import com.mindhub.AppCrud.services.CourseService;
+import com.mindhub.AppCrud.services.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ import static com.mindhub.AppCrud.utils.ScheduleUtil.checkRangeOfHours;
 public class CourseController {
 
     @Autowired
-    private TeacherRepository teacherRepository;
+    private TeacherService teacherService;
 
     @Autowired
     private StudentRepository studentRepository;
@@ -83,14 +84,14 @@ public class CourseController {
         }
 
         try {
-            if (!teacherRepository.existsById(newCourseApp.teacherId())) {
+            if (!teacherService.existsTeacherById(newCourseApp.teacherId())) {
                 return new ResponseEntity<>("Teacher not found", HttpStatus.NOT_FOUND);
             }
         } catch (Exception ignored){}
 
         Course course = new Course(newCourseApp.name(), newCourseApp.place());
         course.setTeacher(newCourseApp.teacherId() != null
-                ? teacherRepository.findById(newCourseApp.teacherId()).orElse(null)
+                ? teacherService.getTeacherById(newCourseApp.teacherId())
                 :null);
         courseService.saveCourse(course);
 
@@ -117,11 +118,11 @@ public class CourseController {
             return new ResponseEntity<>("The course does not exist", HttpStatus.FORBIDDEN);
         }
 
-        if (!teacherRepository.existsByEmail(teacherCurrent.getName())) {
+        if (!teacherService.existsTeacherByEmail(teacherCurrent.getName())) {
             return new ResponseEntity<>("The teacher does not exist", HttpStatus.FORBIDDEN);
         }
 
-        if (!courseService.existsCourseByIdAndTeacher(courseId, teacherRepository.findByEmail(teacherCurrent.getName()))) {
+        if (!courseService.existsCourseByIdAndTeacher(courseId, teacherService.getTeacherByEmail(teacherCurrent.getName()))) {
             return new ResponseEntity<>("The course does not belong to the teacher", HttpStatus.FORBIDDEN);
         }
 

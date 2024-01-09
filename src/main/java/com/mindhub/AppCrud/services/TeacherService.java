@@ -19,6 +19,8 @@ public interface TeacherService {
 
     TeacherDTO getTeacherDTOByEmail(String teacherEmail);
 
+    boolean existsTeacherById(String teacherId);
+
     boolean existsTeacherByEmail(String teacherEmail);
 
     void saveTeacher(Teacher teacher);

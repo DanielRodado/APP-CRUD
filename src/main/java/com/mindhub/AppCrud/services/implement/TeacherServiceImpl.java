@@ -48,6 +48,11 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
+    public boolean existsTeacherById(String teacherId) {
+        return teacherRepository.existsById(teacherId);
+    }
+
+    @Override
     public boolean existsTeacherByEmail(String teacherEmail) {
         return teacherRepository.existsByEmail(teacherEmail);
     }
