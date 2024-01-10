@@ -5,20 +5,14 @@ import com.mindhub.AppCrud.DTO.NewCourseApplicationDTO;
 import com.mindhub.AppCrud.models.Course;
 import com.mindhub.AppCrud.models.CourseSchedule;
 import com.mindhub.AppCrud.models.Schedule;
-import com.mindhub.AppCrud.models.StudentCourse;
 import com.mindhub.AppCrud.models.subClass.Student;
-import com.mindhub.AppCrud.repositories.*;
-import com.mindhub.AppCrud.services.CourseScheduleService;
-import com.mindhub.AppCrud.services.CourseService;
-import com.mindhub.AppCrud.services.StudentCourseService;
-import com.mindhub.AppCrud.services.TeacherService;
+import com.mindhub.AppCrud.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,13 +28,13 @@ public class CourseController {
     private TeacherService teacherService;
 
     @Autowired
-    private StudentRepository studentRepository;
+    private StudentService studentService;
 
     @Autowired
     private CourseService courseService;
 
     @Autowired
-    private ScheduleRepository scheduleRepository;
+    private ScheduleService scheduleService;
 
     @Autowired
     private StudentCourseService studentCourseService;
@@ -71,11 +65,11 @@ public class CourseController {
 
             for (String scheduleId : newCourseApp.idSchedules()) {
 
-                if (!scheduleRepository.existsById(scheduleId)) {
+                if (!scheduleService.existsScheduleById(scheduleId)) {
                     return new ResponseEntity<>("One of the schedules could not be found", HttpStatus.NOT_FOUND);
                 }
 
-                Schedule schedule = scheduleRepository.findById(scheduleId).orElse(null);
+                Schedule schedule = scheduleService.getScheduleById(scheduleId);
 
                 if (courseScheduleService.countCourseScheduleBySchedule(schedule) >= 5) {
                     return new ResponseEntity<>("There can only be five simultaneous courses per schedule.", HttpStatus.FORBIDDEN);
@@ -100,10 +94,7 @@ public class CourseController {
         if (schedules != null) {
             for (Schedule schedule : schedules) {
 
-                CourseSchedule courseSchedule = new CourseSchedule();
-                courseSchedule.setCourse(course);
-                courseSchedule.setSchedule(schedule);
-                courseScheduleService.saveCourseSchedule(courseSchedule);
+                courseScheduleService.createNewCourseSchedule(course, schedule); // Create and save
 
             }
         }
@@ -140,7 +131,7 @@ public class CourseController {
             return new ResponseEntity<>("Course not found", HttpStatus.FORBIDDEN);
         }
 
-        studentCourseService.createNewStudentCourse(studentRepository.findByEmail(studentCurrent.getName()),
+        studentCourseService.createNewStudentCourse(studentService.getStudentByEmail(studentCurrent.getName()),
                                                     courseService.getCourseById(courseId));
 
         return new ResponseEntity<>("Course add!", HttpStatus.CREATED);
@@ -151,15 +142,11 @@ public class CourseController {
     public ResponseEntity<String> removeCourseFromStudent(Authentication studentCurrent,
                                                           @RequestParam String courseId) {
 
-        if (!studentRepository.existsByEmail(studentCurrent.getName())) {
-            return new ResponseEntity<>("Student not found.", HttpStatus.FORBIDDEN);
-        }
-
         if (!courseService.existsCourseById(courseId)) {
             return new ResponseEntity<>("Course not found.", HttpStatus.FORBIDDEN);
         }
 
-        Student student = studentRepository.findByEmail(studentCurrent.getName());
+        Student student = studentService.getStudentByEmail(studentCurrent.getName());
         Course course = courseService.getCourseById(courseId);
 
         if (!studentCourseService.existsStudentCourseByStudentAndCourse(student, course)) {
