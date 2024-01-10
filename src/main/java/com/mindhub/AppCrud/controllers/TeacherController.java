@@ -3,8 +3,6 @@ package com.mindhub.AppCrud.controllers;
 import com.mindhub.AppCrud.DTO.NewTeacherApplicationDTO;
 import com.mindhub.AppCrud.DTO.TeacherDTO;
 import com.mindhub.AppCrud.models.subClass.Teacher;
-import com.mindhub.AppCrud.repositories.CourseRepository;
-import com.mindhub.AppCrud.repositories.TeacherRepository;
 import com.mindhub.AppCrud.services.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.mindhub.AppCrud.utils.PersonUtil.verifyEmailByType;
 
@@ -24,9 +21,6 @@ public class TeacherController {
 
     @Autowired
     private TeacherService teacherService;
-
-    @Autowired
-    private CourseRepository courseRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
