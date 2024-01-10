@@ -8,6 +8,7 @@ import com.mindhub.AppCrud.models.StudentCourse;
 import com.mindhub.AppCrud.models.subClass.Admin;
 import com.mindhub.AppCrud.models.subClass.Student;
 import com.mindhub.AppCrud.repositories.*;
+import com.mindhub.AppCrud.services.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,7 @@ import static com.mindhub.AppCrud.utils.PersonUtil.verifyEmailByType;
 public class AdminController {
 
     @Autowired
-    private AdminRepository adminRepository;
+    private AdminService adminService;
 
     @Autowired
     private TeacherRepository teacherRepository;
@@ -58,7 +59,7 @@ public class AdminController {
                     " and no characters after the '.com'", HttpStatus.FORBIDDEN);
         }
 
-        if (studentRepository.existsByEmail(newAdminApp.email().toLowerCase())) {
+        if (adminService.existsAdminByEmail(newAdminApp.email().toLowerCase())) {
             return new ResponseEntity<>("This e-mail is registered", HttpStatus.FORBIDDEN);
         }
 
@@ -72,7 +73,7 @@ public class AdminController {
 
         Admin admin = new Admin(newAdminApp.firstName(), newAdminApp.lastName(), newAdminApp.email().toLowerCase(),
                 passwordEncoder.encode(newAdminApp.password()));
-        adminRepository.save(admin);
+        adminService.saveAdmin(admin);
 
         return new ResponseEntity<>("Admin created!", HttpStatus.CREATED);
 

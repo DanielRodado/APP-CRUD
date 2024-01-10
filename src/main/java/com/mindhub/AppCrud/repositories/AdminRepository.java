@@ -6,4 +6,7 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
 @RepositoryRestResource
 public interface AdminRepository extends JpaRepository<Admin, String> {
+
+    boolean existsByEmail(String adminEmail);
+
 }
