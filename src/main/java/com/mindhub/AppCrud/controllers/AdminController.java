@@ -10,6 +10,7 @@ import com.mindhub.AppCrud.models.subClass.Student;
 import com.mindhub.AppCrud.repositories.*;
 import com.mindhub.AppCrud.services.AdminService;
 import com.mindhub.AppCrud.services.CourseScheduleService;
+import com.mindhub.AppCrud.services.StudentCourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +47,7 @@ public class AdminController {
     private CourseScheduleService courseScheduleService;
 
     @Autowired
-    private StudentCourseRepository studentCourseRepository;
+    private StudentCourseService studentCourseService;
 
     @PostMapping("/admin")
     public ResponseEntity<String> createNewStudent(@RequestBody NewPersonApplicationDTO newAdminApp) {
@@ -171,7 +172,7 @@ public class AdminController {
         StudentCourse studentCourse = new StudentCourse(LocalDate.now());
         studentCourse.setStudent(studentRepository.findById(studentId).orElse(null));
         studentCourse.setCourse(courseRepository.findById(courseId).orElse(null));
-        studentCourseRepository.save(studentCourse);
+        studentCourseService.saveStudentCourse(studentCourse);
 
         return new ResponseEntity<>("Student added to course!", HttpStatus.CREATED);
     }
@@ -191,11 +192,11 @@ public class AdminController {
         Student student = studentRepository.findById(studentId).orElse(null);
         Course course = courseRepository.findById(courseId).orElse(null);
 
-        if (!studentCourseRepository.existsByStudentAndCourse(student, course)) {
+        if (!studentCourseService.existsStudentCourseByStudentAndCourse(student, course)) {
             return new ResponseEntity<>("The student is not in the course.", HttpStatus.FORBIDDEN);
         }
 
-        studentCourseRepository.softDeleteStudentCourse(student, course);
+        studentCourseService.softDeleteStudentCourse(student, course);
 
         return new ResponseEntity<>("Course removed to student!", HttpStatus.OK);
 
