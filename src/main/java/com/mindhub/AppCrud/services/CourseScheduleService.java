@@ -30,4 +30,6 @@ public interface CourseScheduleService {
 
     void saveCourseSchedule(CourseSchedule courseSchedule);
 
+    void createNewCourseSchedule(Course course, Schedule schedule);
+
 }

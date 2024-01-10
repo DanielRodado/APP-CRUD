@@ -2,22 +2,15 @@ package com.mindhub.AppCrud.controllers;
 
 import com.mindhub.AppCrud.DTO.NewPersonApplicationDTO;
 import com.mindhub.AppCrud.models.Course;
-import com.mindhub.AppCrud.models.CourseSchedule;
 import com.mindhub.AppCrud.models.Schedule;
-import com.mindhub.AppCrud.models.StudentCourse;
 import com.mindhub.AppCrud.models.subClass.Admin;
 import com.mindhub.AppCrud.models.subClass.Student;
-import com.mindhub.AppCrud.repositories.*;
-import com.mindhub.AppCrud.services.AdminService;
-import com.mindhub.AppCrud.services.CourseScheduleService;
-import com.mindhub.AppCrud.services.StudentCourseService;
+import com.mindhub.AppCrud.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
 
 import static com.mindhub.AppCrud.utils.PersonUtil.verifyEmailByType;
 
@@ -29,19 +22,19 @@ public class AdminController {
     private AdminService adminService;
 
     @Autowired
-    private TeacherRepository teacherRepository;
+    private TeacherService teacherService;
 
     @Autowired
-    private StudentRepository studentRepository;
+    private StudentService studentService;
 
     @Autowired
-    private CourseRepository courseRepository;
+    private CourseService courseService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private ScheduleRepository scheduleRepository;
+    private ScheduleService scheduleService;
 
     @Autowired
     private CourseScheduleService courseScheduleService;
@@ -84,16 +77,16 @@ public class AdminController {
     @PatchMapping("/admin/add/schedules/courses")
     public ResponseEntity<String> addScheduleToCourse(@RequestParam String scheduleId, @RequestParam String courseId) {
 
-        if (!courseRepository.existsById(courseId)) {
+        if (!courseService.existsCourseById(courseId)) {
             return new ResponseEntity<>("No schedule found.", HttpStatus.NOT_FOUND);
         }
 
-        if (!scheduleRepository.existsById(scheduleId)) {
+        if (!scheduleService.existsScheduleById(scheduleId)) {
             return new ResponseEntity<>("No schedule found.", HttpStatus.NOT_FOUND);
         }
 
-        Course course = courseRepository.findById(courseId).orElse(null);
-        Schedule schedule = scheduleRepository.findById(scheduleId).orElse(null);
+        Course course = courseService.getCourseById(courseId);
+        Schedule schedule = scheduleService.getScheduleById(scheduleId);
 
         if (courseScheduleService.existsCourseScheduleByCourseAndSchedule(course, schedule)) {
             return new ResponseEntity<>("The course already has this schedule.", HttpStatus.FORBIDDEN);
@@ -113,10 +106,7 @@ public class AdminController {
             return new ResponseEntity<>("There can only be five simultaneous courses per schedule.", HttpStatus.FORBIDDEN);
         }
 
-        CourseSchedule courseSchedule = new CourseSchedule();
-        courseSchedule.setSchedule(schedule);
-        courseSchedule.setCourse(course);
-        courseScheduleService.saveCourseSchedule(courseSchedule);
+        courseScheduleService.createNewCourseSchedule(course, schedule); // Create and save
 
         return new ResponseEntity<>("Schedule added to course", HttpStatus.OK);
 
@@ -125,19 +115,19 @@ public class AdminController {
     @PatchMapping("/admin/add/courses/teachers")
     public ResponseEntity<String> addCourseToTeacher(@RequestParam String teacherId, @RequestParam String courseId) {
 
-        if (!courseRepository.existsById(courseId)) {
+        if (!courseService.existsCourseById(courseId)) {
             return new ResponseEntity<>("The course does not exist", HttpStatus.FORBIDDEN);
         }
 
-        if (!teacherRepository.existsById(teacherId)) {
+        if (!teacherService.existsTeacherById(teacherId)) {
             return new ResponseEntity<>("The teacher does not exist", HttpStatus.FORBIDDEN);
         }
 
-        if (courseRepository.existsByIdAndTeacherIsNotNull(courseId)) {
+        if (courseService.existsCourseByIdAndNotNullTeacher(courseId)) {
             return new ResponseEntity<>("This course already has a teacher", HttpStatus.FORBIDDEN);
         }
 
-        courseRepository.addCourseToTeacherById(courseId, teacherRepository.findById(teacherId).orElse(null));
+        courseService.addCourseToTeacherById(courseId, teacherService.getTeacherById(teacherId));
 
         return new ResponseEntity<>("Course added to the teacher", HttpStatus.OK);
     }
@@ -145,15 +135,15 @@ public class AdminController {
     @PatchMapping("/admin/remove/teachers/courses")
     public ResponseEntity<String> removeTeacherFromCourse(@RequestParam String courseId) {
 
-        if (!courseRepository.existsById(courseId)) {
+        if (!courseService.existsCourseById(courseId)) {
             return new ResponseEntity<>("The course does not exist", HttpStatus.FORBIDDEN);
         }
 
-        if (!courseRepository.existsByIdAndTeacherIsNotNull(courseId)) {
+        if (!courseService.existsCourseByIdAndNotNullTeacher(courseId)) {
             return new ResponseEntity<>("This course does not have a teacher", HttpStatus.FORBIDDEN);
         }
 
-        courseRepository.removeTeacherFromCourseById(courseId);
+        courseService.removeTeacherFromCourseById(courseId);
 
         return new ResponseEntity<>("Teacher removed from the course", HttpStatus.OK);
     }
@@ -161,18 +151,15 @@ public class AdminController {
     @PatchMapping("/admin/add/students/courses")
     public ResponseEntity<String> addStudentToCourse(@RequestParam String studentId, @RequestParam String courseId) {
 
-        if (!studentRepository.existsById(studentId)) {
+        if (!studentService.existsStudentById(studentId)) {
             return new ResponseEntity<>("Student not found", HttpStatus.FORBIDDEN);
         }
 
-        if (!courseRepository.existsById(courseId)) {
+        if (!courseService.existsCourseById(courseId)) {
             return new ResponseEntity<>("Course not found", HttpStatus.FORBIDDEN);
         }
 
-        StudentCourse studentCourse = new StudentCourse(LocalDate.now());
-        studentCourse.setStudent(studentRepository.findById(studentId).orElse(null));
-        studentCourse.setCourse(courseRepository.findById(courseId).orElse(null));
-        studentCourseService.saveStudentCourse(studentCourse);
+        studentCourseService.createNewStudentCourse(studentService.getStudentById(studentId), courseService.getCourseById(courseId));
 
         return new ResponseEntity<>("Student added to course!", HttpStatus.CREATED);
     }
@@ -181,16 +168,16 @@ public class AdminController {
     public ResponseEntity<String> removeStudentFromCourse(@RequestParam String studentId,
                                                          @RequestParam String courseId) {
 
-        if (!studentRepository.existsById(studentId)) {
+        if (!studentService.existsStudentById(studentId)) {
             return new ResponseEntity<>("Student not found.", HttpStatus.FORBIDDEN);
         }
 
-        if (!courseRepository.existsById(courseId)) {
+        if (!courseService.existsCourseById(courseId)) {
             return new ResponseEntity<>("Course not found.", HttpStatus.FORBIDDEN);
         }
 
-        Student student = studentRepository.findById(studentId).orElse(null);
-        Course course = courseRepository.findById(courseId).orElse(null);
+        Student student = studentService.getStudentById(studentId);
+        Course course = courseService.getCourseById(courseId);
 
         if (!studentCourseService.existsStudentCourseByStudentAndCourse(student, course)) {
             return new ResponseEntity<>("The student is not in the course.", HttpStatus.FORBIDDEN);

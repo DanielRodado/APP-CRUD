@@ -67,4 +67,12 @@ public class CourseScheduleServiceImpl implements CourseScheduleService {
         courseScheduleRepository.save(courseSchedule);
     }
 
+    @Override
+    public void createNewCourseSchedule(Course course, Schedule schedule) {
+        CourseSchedule courseSchedule = new CourseSchedule();
+        courseSchedule.setSchedule(schedule);
+        courseSchedule.setCourse(course);
+        saveCourseSchedule(courseSchedule);
+    }
+
 }
