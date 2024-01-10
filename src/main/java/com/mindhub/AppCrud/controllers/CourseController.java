@@ -8,6 +8,7 @@ import com.mindhub.AppCrud.models.Schedule;
 import com.mindhub.AppCrud.models.StudentCourse;
 import com.mindhub.AppCrud.models.subClass.Student;
 import com.mindhub.AppCrud.repositories.*;
+import com.mindhub.AppCrud.services.CourseScheduleService;
 import com.mindhub.AppCrud.services.CourseService;
 import com.mindhub.AppCrud.services.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +45,7 @@ public class CourseController {
     private StudentCourseRepository studentCourseRepository;
 
     @Autowired
-    private CourseScheduleRepository courseScheduleRepository;
+    private CourseScheduleService courseScheduleService;
 
     @GetMapping("/courses")
     public Set<CourseDTO> getAllCoursesDTO() {
@@ -75,7 +76,7 @@ public class CourseController {
 
                 Schedule schedule = scheduleRepository.findById(scheduleId).orElse(null);
 
-                if (courseScheduleRepository.countBySchedule(schedule) >= 5) {
+                if (courseScheduleService.countCourseScheduleBySchedule(schedule) >= 5) {
                     return new ResponseEntity<>("There can only be five simultaneous courses per schedule.", HttpStatus.FORBIDDEN);
                 }
 
@@ -101,7 +102,7 @@ public class CourseController {
                 CourseSchedule courseSchedule = new CourseSchedule();
                 courseSchedule.setCourse(course);
                 courseSchedule.setSchedule(schedule);
-                courseScheduleRepository.save(courseSchedule);
+                courseScheduleService.saveCourseSchedule(courseSchedule);
 
             }
         }
@@ -204,8 +205,8 @@ public class CourseController {
         }
 
         Set<Course> courses =
-                courseScheduleRepository.findCoursesByScheduleStartTimeBetween(scheduleStartTimeStartRange,
-                        scheduleStartTimeEndRange);
+                courseScheduleService.getAllCoursesByScheduleStartTimeBetween(scheduleStartTimeStartRange,
+                                                                              scheduleStartTimeEndRange);
 
         return courses.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
                 : new ResponseEntity<>(courses.stream().map(CourseDTO::new).collect(Collectors.toSet()),
@@ -245,12 +246,13 @@ public class CourseController {
         }
 
         Set<Course> courses =
-                courseScheduleRepository.findCoursesByScheduleEndTimeBetween(scheduleEndTimeStartRange,
-                        scheduleEndTimeEndRange);
+                courseScheduleService.getAllCoursesByScheduleEndTimeBetween(scheduleEndTimeStartRange,
+                                                                            scheduleEndTimeEndRange);
 
         return courses.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
                 : new ResponseEntity<>(courses.stream().map(CourseDTO::new).collect(Collectors.toSet()),
                 HttpStatus.OK);
+
     }
 
 

@@ -9,6 +9,7 @@ import com.mindhub.AppCrud.models.subClass.Admin;
 import com.mindhub.AppCrud.models.subClass.Student;
 import com.mindhub.AppCrud.repositories.*;
 import com.mindhub.AppCrud.services.AdminService;
+import com.mindhub.AppCrud.services.CourseScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,7 @@ public class AdminController {
     private ScheduleRepository scheduleRepository;
 
     @Autowired
-    private CourseScheduleRepository courseScheduleRepository;
+    private CourseScheduleService courseScheduleService;
 
     @Autowired
     private StudentCourseRepository studentCourseRepository;
@@ -93,27 +94,28 @@ public class AdminController {
         Course course = courseRepository.findById(courseId).orElse(null);
         Schedule schedule = scheduleRepository.findById(scheduleId).orElse(null);
 
-        if (courseScheduleRepository.existsByCourseAndSchedule(course, schedule)) {
+        if (courseScheduleService.existsCourseScheduleByCourseAndSchedule(course, schedule)) {
             return new ResponseEntity<>("The course already has this schedule.", HttpStatus.FORBIDDEN);
         }
 
-        if (courseScheduleRepository.existsByCourseAndSchedule_DayWeekAndSchedule_ShiftType(
-                course, schedule.getDayWeek(), schedule.getShiftType())) {
+        if (courseScheduleService.existsCourseScheduleByCourseAndSchedule_DayWeekAndSchedule_ShiftType(course,
+                                                                                                       schedule.getDayWeek(),
+                                                                                                       schedule.getShiftType())) {
             return new ResponseEntity<>("A course cannot have two schedules in the same shift on the same day.", HttpStatus.FORBIDDEN);
         }
 
-        if (courseScheduleRepository.countByCourse(course) >= 2) {
+        if (courseScheduleService.countCourseScheduleByCourse(course) >= 2) {
             return new ResponseEntity<>("Courses can only have two schedules.", HttpStatus.NOT_FOUND);
         }
 
-        if (courseScheduleRepository.countBySchedule(schedule) >= 5) {
+        if (courseScheduleService.countCourseScheduleBySchedule(schedule) >= 5) {
             return new ResponseEntity<>("There can only be five simultaneous courses per schedule.", HttpStatus.FORBIDDEN);
         }
 
         CourseSchedule courseSchedule = new CourseSchedule();
         courseSchedule.setSchedule(schedule);
         courseSchedule.setCourse(course);
-        courseScheduleRepository.save(courseSchedule);
+        courseScheduleService.saveCourseSchedule(courseSchedule);
 
         return new ResponseEntity<>("Schedule added to course", HttpStatus.OK);
 

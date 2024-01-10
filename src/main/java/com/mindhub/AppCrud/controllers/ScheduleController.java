@@ -1,10 +1,9 @@
 package com.mindhub.AppCrud.controllers;
 
-import com.mindhub.AppCrud.DTO.CourseDTO;
 import com.mindhub.AppCrud.DTO.NewScheduleApplicationDTO;
 import com.mindhub.AppCrud.DTO.ScheduleDTO;
 import com.mindhub.AppCrud.models.*;
-import com.mindhub.AppCrud.repositories.CourseScheduleRepository;
+import com.mindhub.AppCrud.services.CourseScheduleService;
 import com.mindhub.AppCrud.services.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,7 +24,7 @@ public class ScheduleController {
     private ScheduleService scheduleService;
 
     @Autowired
-    private CourseScheduleRepository courseScheduleRepository;
+    private CourseScheduleService courseScheduleService;
 
     @GetMapping("/schedules")
     public Set<ScheduleDTO> getAllSchedulesDTO() {
@@ -39,12 +38,12 @@ public class ScheduleController {
             return new ResponseEntity<>("No schedule found.", HttpStatus.NOT_FOUND);
         }
 
-        Set<CourseSchedule> courses =
-                courseScheduleRepository.findBySchedule(scheduleService.getScheduleById(scheduleId));
+        Set<CourseSchedule> courseSchedules =
+                courseScheduleService.getCourseScheduleBySchedule(scheduleService.getScheduleById(scheduleId));
 
-        return courses.isEmpty()
+        return courseSchedules.isEmpty()
                 ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-                : new ResponseEntity<>(courses.stream().map(CourseSchedule::getCourse).map(CourseDTO::new), HttpStatus.OK);
+                : new ResponseEntity<>(courseScheduleService.getCoursesDTOFromCourseSchedule(courseSchedules), HttpStatus.OK);
     }
 
     @PostMapping("/schedules")
