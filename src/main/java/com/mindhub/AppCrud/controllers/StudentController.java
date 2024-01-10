@@ -3,7 +3,7 @@ package com.mindhub.AppCrud.controllers;
 import com.mindhub.AppCrud.DTO.NewPersonApplicationDTO;
 import com.mindhub.AppCrud.DTO.StudentDTO;
 import com.mindhub.AppCrud.models.subClass.Student;
-import com.mindhub.AppCrud.repositories.StudentRepository;
+import com.mindhub.AppCrud.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.mindhub.AppCrud.utils.PersonUtil.verifyEmailByType;
 
@@ -21,24 +20,24 @@ import static com.mindhub.AppCrud.utils.PersonUtil.verifyEmailByType;
 public class StudentController {
 
     @Autowired
-    private StudentRepository studentRepository;
+    private StudentService studentService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @GetMapping("/students")
     public Set<StudentDTO> getAllStudentDTO() {
-        return studentRepository.findAll().stream().map(StudentDTO::new).collect(Collectors.toSet());
+        return studentService.getAllStudentsDTO();
     }
 
     @GetMapping("/students/first-name/containing/{letter}")
     public ResponseEntity<Object> getAllStudentsDTOIfFirstNameContaining(@PathVariable String letter) {
 
-        Set<Student> students = studentRepository.findByFirstNameContainingIgnoreCase(letter);
+        Set<Student> students = studentService.getAllStudentsIfFirstNameContainingIgnoreCase(letter);
 
         return students.isEmpty()
                 ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-                : new ResponseEntity<>(students.stream().map(StudentDTO::new).collect(Collectors.toSet()), HttpStatus.OK);
+                : new ResponseEntity<>(studentService.convertToCollectionStudentsDTO(students), HttpStatus.OK);
 
     }
 
@@ -54,7 +53,7 @@ public class StudentController {
                     " and no characters after the '.com'", HttpStatus.FORBIDDEN);
         }
 
-        if (studentRepository.existsByEmail(newStudentApp.email().toLowerCase())) {
+        if (studentService.existsStudentByEmail(newStudentApp.email().toLowerCase())) {
             return new ResponseEntity<>("This e-mail is registered", HttpStatus.FORBIDDEN);
         }
 
@@ -68,7 +67,7 @@ public class StudentController {
 
         Student student = new Student(newStudentApp.firstName(), newStudentApp.lastName(), newStudentApp.email().toLowerCase(),
                 passwordEncoder.encode(newStudentApp.password()));
-        studentRepository.save(student);
+        studentService.saveStudent(student);
 
         return new ResponseEntity<>("Student created!", HttpStatus.CREATED);
 
@@ -76,7 +75,7 @@ public class StudentController {
 
     @GetMapping("/students/current")
     public StudentDTO getStudentCurrent(Authentication studentCurrent) {
-        return new StudentDTO(studentRepository.findByEmail(studentCurrent.getName()));
+        return studentService.getStudentDTOByEmail(studentCurrent.getName());
     }
 
 }
