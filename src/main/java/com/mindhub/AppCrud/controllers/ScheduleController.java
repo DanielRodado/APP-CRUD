@@ -5,7 +5,7 @@ import com.mindhub.AppCrud.DTO.NewScheduleApplicationDTO;
 import com.mindhub.AppCrud.DTO.ScheduleDTO;
 import com.mindhub.AppCrud.models.*;
 import com.mindhub.AppCrud.repositories.CourseScheduleRepository;
-import com.mindhub.AppCrud.repositories.ScheduleRepository;
+import com.mindhub.AppCrud.services.ScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalTime;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.mindhub.AppCrud.utils.ScheduleUtil.checkRangeHourWithTypeDay;
 import static com.mindhub.AppCrud.utils.ScheduleUtil.checkRangeOfHours;
@@ -23,25 +22,25 @@ import static com.mindhub.AppCrud.utils.ScheduleUtil.checkRangeOfHours;
 public class ScheduleController {
 
     @Autowired
-    private ScheduleRepository scheduleRepository;
+    private ScheduleService scheduleService;
 
     @Autowired
     private CourseScheduleRepository courseScheduleRepository;
 
     @GetMapping("/schedules")
     public Set<ScheduleDTO> getAllSchedulesDTO() {
-        return scheduleRepository.findAll().stream().map(ScheduleDTO::new).collect(Collectors.toSet());
+        return scheduleService.getAllSchedulesDTO();
     }
 
     @GetMapping("/schedules/courses")
     public ResponseEntity<Object> getAllCoursesDTOBySchedule(@RequestParam String scheduleId) {
 
-        if (!scheduleRepository.existsById(scheduleId)) {
+        if (!scheduleService.existsScheduleById(scheduleId)) {
             return new ResponseEntity<>("No schedule found.", HttpStatus.NOT_FOUND);
         }
 
         Set<CourseSchedule> courses =
-                courseScheduleRepository.findBySchedule(scheduleRepository.findById(scheduleId).orElse(null));
+                courseScheduleRepository.findBySchedule(scheduleService.getScheduleById(scheduleId));
 
         return courses.isEmpty()
                 ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
@@ -64,7 +63,7 @@ public class ScheduleController {
             return new ResponseEntity<>("The shift type entered is not a valid type.", HttpStatus.FORBIDDEN);
         }
 
-        if (scheduleRepository.existsByDayWeekAndShiftTypeAndStartTimeAndEndTime(DayType.valueOf(newScheduleApp.dayWeek()),
+        if (scheduleService.existsSchedule(DayType.valueOf(newScheduleApp.dayWeek()),
                 ShiftType.valueOf(newScheduleApp.shiftType()), newScheduleApp.startTime(), newScheduleApp.endTime())) {
             return new ResponseEntity<>("This schedule already exists. Please create another one.",
                     HttpStatus.FORBIDDEN);
@@ -102,7 +101,7 @@ public class ScheduleController {
         Schedule schedule = new Schedule(DayType.valueOf(newScheduleApp.dayWeek()), ShiftType.valueOf(newScheduleApp.shiftType()),
                 newScheduleApp.startTime(), newScheduleApp.endTime());
 
-        scheduleRepository.save(schedule);
+        scheduleService.saveSchedule(schedule);
 
         return new ResponseEntity<>("Schedule created!", HttpStatus.CREATED);
     }
