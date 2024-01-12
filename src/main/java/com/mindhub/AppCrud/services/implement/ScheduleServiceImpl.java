@@ -2,7 +2,7 @@ package com.mindhub.AppCrud.services.implement;
 
 import com.mindhub.AppCrud.DTO.ScheduleDTO;
 import com.mindhub.AppCrud.models.CourseSchedule;
-import com.mindhub.AppCrud.models.DayType;
+import com.mindhub.AppCrud.models.DayWeek;
 import com.mindhub.AppCrud.models.Schedule;
 import com.mindhub.AppCrud.models.ShiftType;
 import com.mindhub.AppCrud.repositories.ScheduleRepository;
@@ -52,7 +52,7 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public boolean existsSchedule(DayType dayWeek, ShiftType shiftType, LocalTime startTime, LocalTime endTime) {
+    public boolean existsSchedule(DayWeek dayWeek, ShiftType shiftType, LocalTime startTime, LocalTime endTime) {
         return scheduleRepository.existsByDayWeekAndShiftTypeAndStartTimeAndEndTime(dayWeek, shiftType, startTime, endTime);
     }
 

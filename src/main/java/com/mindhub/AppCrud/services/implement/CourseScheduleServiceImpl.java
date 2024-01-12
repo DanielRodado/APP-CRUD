@@ -58,7 +58,7 @@ public class CourseScheduleServiceImpl implements CourseScheduleService {
     }
 
     @Override
-    public boolean existsCourseScheduleByCourseAndSchedule_DayWeekAndSchedule_ShiftType(Course course, DayType dayWeek, ShiftType shiftType) {
+    public boolean existsCourseScheduleByCourseAndSchedule_DayWeekAndSchedule_ShiftType(Course course, DayWeek dayWeek, ShiftType shiftType) {
         return courseScheduleRepository.existsByCourseAndSchedule_DayWeekAndSchedule_ShiftType(course, dayWeek, shiftType);
     }
 

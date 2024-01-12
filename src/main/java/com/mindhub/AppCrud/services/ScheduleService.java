@@ -2,7 +2,7 @@ package com.mindhub.AppCrud.services;
 
 import com.mindhub.AppCrud.DTO.ScheduleDTO;
 import com.mindhub.AppCrud.models.CourseSchedule;
-import com.mindhub.AppCrud.models.DayType;
+import com.mindhub.AppCrud.models.DayWeek;
 import com.mindhub.AppCrud.models.Schedule;
 import com.mindhub.AppCrud.models.ShiftType;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +22,7 @@ public interface ScheduleService {
 
     boolean existsScheduleById(String scheduleId);
 
-    boolean existsSchedule(DayType dayWeek, ShiftType shiftType, LocalTime startTime, LocalTime timeEnd);
+    boolean existsSchedule(DayWeek dayWeek, ShiftType shiftType, LocalTime startTime, LocalTime timeEnd);
 
     void saveSchedule(Schedule schedule);
 

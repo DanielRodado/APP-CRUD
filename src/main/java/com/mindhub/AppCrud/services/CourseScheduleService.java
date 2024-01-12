@@ -25,7 +25,7 @@ public interface CourseScheduleService {
     boolean existsCourseScheduleByCourseAndSchedule(Course course, Schedule schedule);
 
     boolean existsCourseScheduleByCourseAndSchedule_DayWeekAndSchedule_ShiftType(Course course,
-                                                                                 DayType dayWeek,
+                                                                                 DayWeek dayWeek,
                                                                                  ShiftType shiftType);
 
     void saveCourseSchedule(CourseSchedule courseSchedule);

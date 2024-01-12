@@ -1,6 +1,6 @@
 package com.mindhub.AppCrud.repositories;
 
-import com.mindhub.AppCrud.models.DayType;
+import com.mindhub.AppCrud.models.DayWeek;
 import com.mindhub.AppCrud.models.Schedule;
 import com.mindhub.AppCrud.models.ShiftType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,7 +11,7 @@ import java.time.LocalTime;
 @RepositoryRestResource
 public interface ScheduleRepository extends JpaRepository<Schedule, String> {
 
-    boolean existsByDayWeekAndShiftTypeAndStartTimeAndEndTime(DayType dayWeek, ShiftType shiftType,
+    boolean existsByDayWeekAndShiftTypeAndStartTimeAndEndTime(DayWeek dayWeek, ShiftType shiftType,
                                                               LocalTime startTime, LocalTime endTime);
 
 }

@@ -1,7 +1,7 @@
 package com.mindhub.AppCrud.DTO;
 
 import com.mindhub.AppCrud.models.CourseSchedule;
-import com.mindhub.AppCrud.models.DayType;
+import com.mindhub.AppCrud.models.DayWeek;
 import com.mindhub.AppCrud.models.ShiftType;
 
 import java.time.LocalTime;
@@ -14,7 +14,7 @@ public class CourseScheduleDTO {
 
     private final LocalTime startTime, endTime;
 
-    private final DayType dayWeek;
+    private final DayWeek dayWeek;
 
     private final ShiftType shiftType;
 
@@ -39,7 +39,7 @@ public class CourseScheduleDTO {
         return scheduleId;
     }
 
-    public DayType getDayWeek() {
+    public DayWeek getDayWeek() {
         return dayWeek;
     }
 

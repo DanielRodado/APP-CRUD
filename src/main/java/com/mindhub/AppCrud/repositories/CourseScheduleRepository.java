@@ -28,6 +28,6 @@ public interface CourseScheduleRepository extends JpaRepository<CourseSchedule, 
 
     boolean existsByCourseAndSchedule(Course course, Schedule schedule);
 
-    boolean existsByCourseAndSchedule_DayWeekAndSchedule_ShiftType(Course course, DayType dayWeek, ShiftType shiftType);
+    boolean existsByCourseAndSchedule_DayWeekAndSchedule_ShiftType(Course course, DayWeek dayWeek, ShiftType shiftType);
 
 }

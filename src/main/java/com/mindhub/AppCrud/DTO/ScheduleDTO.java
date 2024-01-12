@@ -1,6 +1,6 @@
 package com.mindhub.AppCrud.DTO;
 
-import com.mindhub.AppCrud.models.DayType;
+import com.mindhub.AppCrud.models.DayWeek;
 import com.mindhub.AppCrud.models.Schedule;
 import com.mindhub.AppCrud.models.ShiftType;
 
@@ -14,7 +14,7 @@ public class ScheduleDTO {
 
     private final LocalTime startTime, endTime;
 
-    private final DayType dayWeek;
+    private final DayWeek dayWeek;
 
     private final ShiftType shiftType;
 
@@ -37,7 +37,7 @@ public class ScheduleDTO {
         return id;
     }
 
-    public DayType getDayWeek() {
+    public DayWeek getDayWeek() {
         return dayWeek;
     }
 

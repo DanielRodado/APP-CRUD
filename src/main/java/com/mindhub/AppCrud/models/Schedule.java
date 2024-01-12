@@ -16,7 +16,7 @@ public class Schedule {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private DayType dayWeek;
+    private DayWeek dayWeek;
 
     private ShiftType shiftType;
 
@@ -30,7 +30,7 @@ public class Schedule {
     public Schedule() {
     }
 
-    public Schedule(DayType dayWeek, ShiftType shiftType, LocalTime startTime, LocalTime endTime) {
+    public Schedule(DayWeek dayWeek, ShiftType shiftType, LocalTime startTime, LocalTime endTime) {
         this.dayWeek = dayWeek;
         this.shiftType = shiftType;
         this.startTime = startTime;
@@ -43,11 +43,11 @@ public class Schedule {
         return id;
     }
 
-    public DayType getDayWeek() {
+    public DayWeek getDayWeek() {
         return dayWeek;
     }
 
-    public void setDayWeek(DayType dayWeek) {
+    public void setDayWeek(DayWeek dayWeek) {
         this.dayWeek = dayWeek;
     }
 

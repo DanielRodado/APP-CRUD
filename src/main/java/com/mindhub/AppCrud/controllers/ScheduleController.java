@@ -40,7 +40,7 @@ public class ScheduleController {
     public ResponseEntity<String> createNewSchedules(@RequestBody NewScheduleApplicationDTO newScheduleApp) {
 
         try {
-            DayType.valueOf(newScheduleApp.dayWeek().toUpperCase());
+            DayWeek.valueOf(newScheduleApp.dayWeek().toUpperCase());
         } catch (Exception ignored) {
             return new ResponseEntity<>("The day of the week entered is not a valid day of the week.",
                     HttpStatus.FORBIDDEN);
@@ -52,7 +52,7 @@ public class ScheduleController {
             return new ResponseEntity<>("The shift type entered is not a valid type.", HttpStatus.FORBIDDEN);
         }
 
-        if (scheduleService.existsSchedule(DayType.valueOf(newScheduleApp.dayWeek()),
+        if (scheduleService.existsSchedule(DayWeek.valueOf(newScheduleApp.dayWeek()),
                 ShiftType.valueOf(newScheduleApp.shiftType()), newScheduleApp.startTime(), newScheduleApp.endTime())) {
             return new ResponseEntity<>("This schedule already exists. Please create another one.",
                     HttpStatus.FORBIDDEN);
@@ -87,7 +87,7 @@ public class ScheduleController {
             return new ResponseEntity<>("The start and end time must match the shift type.", HttpStatus.FORBIDDEN);
         }
 
-        Schedule schedule = new Schedule(DayType.valueOf(newScheduleApp.dayWeek()), ShiftType.valueOf(newScheduleApp.shiftType()),
+        Schedule schedule = new Schedule(DayWeek.valueOf(newScheduleApp.dayWeek()), ShiftType.valueOf(newScheduleApp.shiftType()),
                 newScheduleApp.startTime(), newScheduleApp.endTime());
 
         scheduleService.saveSchedule(schedule);

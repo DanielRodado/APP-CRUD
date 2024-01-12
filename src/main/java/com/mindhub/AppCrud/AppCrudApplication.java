@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -41,19 +40,19 @@ public class AppCrudApplication {
 
 			// Schedules
 
-			Schedule scheduleOne = new Schedule(DayType.MONDAY, ShiftType.AFTERNOON, LocalTime.of(14, 0),
+			Schedule scheduleOne = new Schedule(DayWeek.MONDAY, ShiftType.AFTERNOON, LocalTime.of(14, 0),
 					LocalTime.of(18, 0));
 			scheduleRepository.save(scheduleOne);
 
-			Schedule scheduleTwo = new Schedule(DayType.THURSDAY, ShiftType.MORNING, LocalTime.of(8, 30),
+			Schedule scheduleTwo = new Schedule(DayWeek.THURSDAY, ShiftType.MORNING, LocalTime.of(8, 30),
 					LocalTime.of(10, 30));
 			scheduleRepository.save(scheduleTwo);
 
-			Schedule scheduleThree = new Schedule(DayType.WEDNESDAY, ShiftType.AFTERNOON, LocalTime.of(12, 0),
+			Schedule scheduleThree = new Schedule(DayWeek.WEDNESDAY, ShiftType.AFTERNOON, LocalTime.of(12, 0),
 					LocalTime.of(16, 30));
 			scheduleRepository.save(scheduleThree);
 
-			Schedule scheduleFour = new Schedule(DayType.THURSDAY, ShiftType.EVENING, LocalTime.of(18, 30),
+			Schedule scheduleFour = new Schedule(DayWeek.THURSDAY, ShiftType.EVENING, LocalTime.of(18, 30),
 					LocalTime.of(21, 30));
 			scheduleRepository.save(scheduleFour);
 
