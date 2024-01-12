@@ -1,6 +1,6 @@
 package com.mindhub.AppCrud.models;
 
-public enum DayType {
+public enum DayWeek {
 
     MONDAY,
 
