@@ -40,17 +40,7 @@ public interface StudentService {
 
     void validateStudentApp(NewPersonApplicationDTO newStudentApp);
 
-    void validateEmail(String email);
-
-    void validateFirstName(String firstName);
-
-    void validateLatsName(String lastName);
-
-    void validatePassword(String password);
-
     void validateUniqueEmail(String email);
-
-    void validateRequirementsEmail(String email);
 
     Student createStudentFromDTO(NewPersonApplicationDTO newStudentApp);
 

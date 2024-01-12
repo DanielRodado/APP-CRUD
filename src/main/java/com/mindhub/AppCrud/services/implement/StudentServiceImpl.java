@@ -4,6 +4,7 @@ import com.mindhub.AppCrud.DTO.NewPersonApplicationDTO;
 import com.mindhub.AppCrud.DTO.StudentDTO;
 import com.mindhub.AppCrud.models.subClass.Student;
 import com.mindhub.AppCrud.repositories.StudentRepository;
+import com.mindhub.AppCrud.services.PersonService;
 import com.mindhub.AppCrud.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,9 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private PersonService personService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -101,54 +105,18 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void validateStudentApp(NewPersonApplicationDTO newStudentApp) {
-        validateEmail(newStudentApp.email());
-        validateRequirementsEmail(newStudentApp.email());
+        personService.validateEmail(newStudentApp.email());
+        personService.validateRequirementsEmail(newStudentApp.email(), "student");
         validateUniqueEmail(newStudentApp.email());
-        validateFirstName(newStudentApp.firstName());
-        validateLatsName(newStudentApp.lastName());
-        validatePassword(newStudentApp.password());
-    }
-
-    @Override
-    public void validateEmail(String email) {
-        if (email.isBlank()) {
-            throw validationException("The mail cannot be empty");
-        }
-    }
-
-    @Override
-    public void validateFirstName(String firstName) {
-        if (firstName.isBlank()) {
-            throw validationException("The first name cannot be empty");
-        }
-    }
-
-    @Override
-    public void validateLatsName(String lastName) {
-        if (lastName.isBlank()) {
-            throw validationException("The last name cannot be empty");
-        }
-    }
-
-    @Override
-    public void validatePassword(String password) {
-        if (password.isBlank()) {
-            throw validationException("The password cannot be empty");
-        }
+        personService.validateFirstName(newStudentApp.firstName());
+        personService.validateLatsName(newStudentApp.lastName());
+        personService.validatePassword(newStudentApp.password());
     }
 
     @Override
     public void validateUniqueEmail(String email) {
         if (existsStudentByEmail(email)) {
             throw validationException("This e-mail is registered");
-        }
-    }
-
-    @Override
-    public void validateRequirementsEmail(String email) {
-        if (!verifyEmailByType(email, "student")) {
-            throw validationException("The email must have an '@'; 'student', after the '@'; '.com', after 'student' " +
-                    "and no characters after the '.com'");
         }
     }
 
