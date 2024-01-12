@@ -1,11 +1,16 @@
 package com.mindhub.AppCrud.services;
 
+import com.mindhub.AppCrud.DTO.NewTeacherApplicationDTO;
 import com.mindhub.AppCrud.DTO.TeacherDTO;
 import com.mindhub.AppCrud.models.subClass.Teacher;
+import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.Set;
 
 public interface TeacherService {
+
+    // Methods repository
 
     Set<Teacher> getAllTeachers();
 
@@ -24,5 +29,18 @@ public interface TeacherService {
     boolean existsTeacherByEmail(String teacherEmail);
 
     void saveTeacher(Teacher teacher);
+
+    // Methods controllers
+
+    // Create new Teacher
+    ResponseEntity<String> createNewTeacher(NewTeacherApplicationDTO newTeacherApp);
+
+    void validateTeacherApp(NewTeacherApplicationDTO newTeacherApp);
+
+    void validateUniqueEmail(String email);
+
+    void validatesSpecializations(List<String> specializations);
+
+    Teacher createTeacherFromDTO(NewTeacherApplicationDTO newTeacherApp);
 
 }
