@@ -1,5 +1,6 @@
 package com.mindhub.AppCrud.services;
 
+import com.mindhub.AppCrud.DTO.NewScheduleApplicationDTO;
 import com.mindhub.AppCrud.DTO.ScheduleDTO;
 import com.mindhub.AppCrud.models.CourseSchedule;
 import com.mindhub.AppCrud.models.DayWeek;
@@ -31,8 +32,35 @@ public interface ScheduleService {
     // Get All Courses By Schedule
     ResponseEntity<Object> getAllCoursesDTOBySchedule(String scheduleId);
 
-    void validateExistsSchedule(String scheduleId);
+    void validateExistsScheduleById(String scheduleId);
 
     ResponseEntity<Object> createResponseWithCourseDTO(Set<CourseSchedule> courseSchedules);
+
+    // Create new Schedule
+    ResponseEntity<String> createNewSchedule(NewScheduleApplicationDTO newScheduleApp);
+
+    void validateScheduleApp(NewScheduleApplicationDTO newScheduleApp);
+
+    void validateDayWeek(String dayWeek);
+
+    void validateShiftType(String shiftType);
+
+    void validateExistsSchedule(NewScheduleApplicationDTO newScheduleApp);
+
+    void validateStarTimeEqualsEndTime(LocalTime startTime, LocalTime endTime);
+
+    void validateStartTimeIsBeforeTo(LocalTime startTime);
+
+    void validateStartTimeIsAfterEndTime(LocalTime startTime, LocalTime endTime);
+
+    void validateEndTimeIsAfterTo(LocalTime endTime);
+
+    void validateEndTimeIsBeforeStartTime(LocalTime endTime, LocalTime startTime);
+
+    void validateStartTimeAndEndTimeLeastRange(LocalTime startTime, LocalTime endTime, int range);
+
+    void validateStartTimeAndEndTimeMatchShiftType(LocalTime startTime, LocalTime endTime, ShiftType shiftType);
+
+    Schedule createScheduleFromDTO(NewScheduleApplicationDTO newScheduleApp);
 
 }

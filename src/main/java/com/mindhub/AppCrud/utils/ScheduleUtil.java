@@ -19,7 +19,7 @@ public final class ScheduleUtil {
         return Math.abs(ChronoUnit.HOURS.between(startTime, endTime)) < rangeOfDifference;
     }
 
-    public static boolean checkRangeHourWithTypeDay(LocalTime time, ShiftType shiftType) {
+    public static boolean checkRangeHourWithShiftType(LocalTime time, ShiftType shiftType) {
 
         if (time.isBefore(LocalTime.of(12, 0)) && shiftType.toString().equals("MORNING")) return true;
 
