@@ -33,17 +33,7 @@ public class ScheduleController {
 
     @GetMapping("/schedules/courses")
     public ResponseEntity<Object> getAllCoursesDTOBySchedule(@RequestParam String scheduleId) {
-
-        if (!scheduleService.existsScheduleById(scheduleId)) {
-            return new ResponseEntity<>("No schedule found.", HttpStatus.NOT_FOUND);
-        }
-
-        Set<CourseSchedule> courseSchedules =
-                courseScheduleService.getCourseScheduleBySchedule(scheduleService.getScheduleById(scheduleId));
-
-        return courseSchedules.isEmpty()
-                ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-                : new ResponseEntity<>(courseScheduleService.getCoursesDTOFromCourseSchedule(courseSchedules), HttpStatus.OK);
+        return scheduleService.getAllCoursesDTOBySchedule(scheduleId);
     }
 
     @PostMapping("/schedules")
