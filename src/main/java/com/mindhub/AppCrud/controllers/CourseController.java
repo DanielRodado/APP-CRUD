@@ -54,53 +54,7 @@ public class CourseController {
 
     @PostMapping("/courses")
     public ResponseEntity<String> createNewCourse(@RequestBody NewCourseApplicationDTO newCourseApp) {
-
-        Set<Schedule> schedules = newCourseApp.idSchedules() != null ? new HashSet<>() : null;
-
-        if (schedules != null) {
-
-            if (schedules.size() >= 2) {
-                return new ResponseEntity<>("Courses can only have two schedules.", HttpStatus.NOT_FOUND);
-            }
-
-            for (String scheduleId : newCourseApp.idSchedules()) {
-
-                if (!scheduleService.existsScheduleById(scheduleId)) {
-                    return new ResponseEntity<>("One of the schedules could not be found", HttpStatus.NOT_FOUND);
-                }
-
-                Schedule schedule = scheduleService.getScheduleById(scheduleId);
-
-                if (courseScheduleService.countCourseScheduleBySchedule(schedule) >= 5) {
-                    return new ResponseEntity<>("There can only be five simultaneous courses per schedule.", HttpStatus.FORBIDDEN);
-                }
-
-                schedules.add(schedule);
-            }
-        }
-
-        try {
-            if (!teacherService.existsTeacherById(newCourseApp.teacherId())) {
-                return new ResponseEntity<>("Teacher not found", HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception ignored){}
-
-        Course course = new Course(newCourseApp.name(), newCourseApp.place());
-        course.setTeacher(newCourseApp.teacherId() != null
-                ? teacherService.getTeacherById(newCourseApp.teacherId())
-                :null);
-        courseService.saveCourse(course);
-
-        if (schedules != null) {
-            for (Schedule schedule : schedules) {
-
-                courseScheduleService.createNewCourseSchedule(course, schedule); // Create and save
-
-            }
-        }
-
-        return new ResponseEntity<>("Course created!", HttpStatus.CREATED);
-
+        return courseService.createNewCourse(newCourseApp);
     }
 
     @PatchMapping("/teachers/current/remove/courses")

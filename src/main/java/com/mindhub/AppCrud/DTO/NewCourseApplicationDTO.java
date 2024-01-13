@@ -1,6 +1,6 @@
 package com.mindhub.AppCrud.DTO;
 
-import java.util.List;
+import java.util.Set;
 
-public record NewCourseApplicationDTO(String name, String place, String teacherId, List<String> idSchedules) {
+public record NewCourseApplicationDTO(String name, String place, String teacherId, Set<String> idSchedules) {
 }
