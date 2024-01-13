@@ -96,6 +96,10 @@ public class CourseServiceImpl implements CourseService {
 
     // Methods controllers
 
+    public HttpStatus getHttpStatusByCondition(String text) {
+        return text.toLowerCase().contains("not found") ? HttpStatus.NOT_FOUND : HttpStatus.FORBIDDEN;
+    }
+
     // Create new Course
     @Override
     public ResponseEntity<String> createNewCourse(NewCourseApplicationDTO newCourseApp) {
@@ -107,9 +111,7 @@ public class CourseServiceImpl implements CourseService {
             saveCourse(course);
             return new ResponseEntity<>("Course created!", HttpStatus.CREATED);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), e.getMessage().contains("not found")
-                                                         ? HttpStatus.NOT_FOUND
-                                                         : HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>(e.getMessage(), getHttpStatusByCondition(e.getMessage()));
 
         }
     }
@@ -118,7 +120,7 @@ public class CourseServiceImpl implements CourseService {
     public void validateCourseApp(NewCourseApplicationDTO newCourseApp) {
         validateName(newCourseApp.name());
         validatePlace(newCourseApp.place());
-        validateExistsTeacher(newCourseApp.teacherId());
+        validateExistsTeacherById(newCourseApp.teacherId());
         validateSchedules(newCourseApp.idSchedules());
     }
 
@@ -137,7 +139,7 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void validateExistsTeacher(String teacherId) {
+    public void validateExistsTeacherById(String teacherId) {
         if (teacherId != null) {
             if (!teacherService.existsTeacherById(teacherId)) {
                 throw validationException("Teacher not found");
@@ -221,6 +223,38 @@ public class CourseServiceImpl implements CourseService {
     public void assignSchedulesToCourse(Course course, Set<Schedule> schedules) {
         for (Schedule schedule : schedules) {
             courseScheduleService.createNewCourseSchedule(course, schedule);
+        }
+    }
+
+    // Remove course from Teacher
+    @Override
+    public ResponseEntity<String> removeCourseFromTeacher(String teacherEmail, String courseId) {
+        try {
+            validationsBeforeRemoveCourseFromTeacher(teacherEmail, courseId);
+            removeTeacherFromCourseById(courseId);
+            return new ResponseEntity<>("Course removed!", HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), getHttpStatusByCondition(e.getMessage()));
+        }
+    }
+
+    @Override
+    public void validationsBeforeRemoveCourseFromTeacher(String teacherEmail, String courseId) {
+        validateExistsCourseById(courseId);
+        validateCourseInTeacher(courseId, teacherEmail);
+    }
+
+    @Override
+    public void validateExistsCourseById(String courseId) {
+        if (!existsCourseById(courseId)) {
+            throw validationException("Course not found.");
+        }
+    }
+
+    @Override
+    public void validateCourseInTeacher(String courseId, String teacherEmail) {
+        if (!existsCourseByIdAndTeacher(courseId, teacherService.getTeacherByEmail(teacherEmail))) {
+            throw validationException("The course does not belong to the teacher.");
         }
     }
 

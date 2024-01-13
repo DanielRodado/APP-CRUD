@@ -5,6 +5,7 @@ import com.mindhub.AppCrud.DTO.NewCourseApplicationDTO;
 import com.mindhub.AppCrud.models.Course;
 import com.mindhub.AppCrud.models.Schedule;
 import com.mindhub.AppCrud.models.subClass.Teacher;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Set;
@@ -37,6 +38,8 @@ public interface CourseService {
 
     // Methods controllers
 
+    HttpStatus getHttpStatusByCondition(String text);
+
     // Create new Course
     ResponseEntity<String> createNewCourse(NewCourseApplicationDTO newCourseApp);
 
@@ -46,7 +49,7 @@ public interface CourseService {
 
     void validatePlace(String place);
 
-    void validateExistsTeacher(String teacherId);
+    void validateExistsTeacherById(String teacherId);
 
     void validateSchedules(Set<String> idSchedules);
 
@@ -69,5 +72,14 @@ public interface CourseService {
     void assignTeacherToCourse(Course course, String teacherId);
 
     void assignSchedulesToCourse(Course course, Set<Schedule> schedules);
+
+    // Remove course from Teacher
+    ResponseEntity<String> removeCourseFromTeacher(String teacherEmail, String courseId);
+
+    void validationsBeforeRemoveCourseFromTeacher(String teacherEmail, String courseId);
+
+    void validateExistsCourseById(String courseId);
+
+    void validateCourseInTeacher(String courseId, String teacherEmail);
 
 }

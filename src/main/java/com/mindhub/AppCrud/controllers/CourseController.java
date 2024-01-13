@@ -60,22 +60,7 @@ public class CourseController {
     @PatchMapping("/teachers/current/remove/courses")
     public ResponseEntity<String> removeCourseFromTeacher(Authentication teacherCurrent,
                                                           @RequestParam String courseId) {
-
-        if (!courseService.existsCourseById(courseId)) {
-            return new ResponseEntity<>("The course does not exist", HttpStatus.FORBIDDEN);
-        }
-
-        if (!teacherService.existsTeacherByEmail(teacherCurrent.getName())) {
-            return new ResponseEntity<>("The teacher does not exist", HttpStatus.FORBIDDEN);
-        }
-
-        if (!courseService.existsCourseByIdAndTeacher(courseId, teacherService.getTeacherByEmail(teacherCurrent.getName()))) {
-            return new ResponseEntity<>("The course does not belong to the teacher", HttpStatus.FORBIDDEN);
-        }
-
-        courseService.removeTeacherFromCourseById(courseId);
-
-        return new ResponseEntity<>("Course removed!", HttpStatus.OK);
+        return courseService.removeCourseFromTeacher(teacherCurrent.getName(), courseId);
     }
 
     @PostMapping("/students/current/add/courses")
