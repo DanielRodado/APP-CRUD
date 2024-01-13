@@ -28,7 +28,7 @@ public class SecurityConfig {
                                 "/api/students/first-name/containing/{letter}").hasAuthority("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/admin", "/api/courses", "/api/schedules").hasAuthority("ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/api/admin/**").hasAuthority("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/teacher/current").hasAuthority("TEACHER")
+                .requestMatchers(HttpMethod.GET, "/api/teachers/current").hasAuthority("TEACHER")
                 .requestMatchers(HttpMethod.PATCH, "/api/teachers/current/remove/courses").hasAuthority("TEACHER")
                 .requestMatchers(HttpMethod.GET, "/api/students/current").hasAuthority("STUDENT")
                 .requestMatchers(HttpMethod.PATCH, "/api/students/current/add/courses",
