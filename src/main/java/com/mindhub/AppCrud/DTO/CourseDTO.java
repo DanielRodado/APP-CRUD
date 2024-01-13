@@ -5,6 +5,7 @@ import com.mindhub.AppCrud.models.CourseSchedule;
 import com.mindhub.AppCrud.models.Schedule;
 import com.mindhub.AppCrud.models.subClass.Student;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -12,7 +13,7 @@ public class CourseDTO {
 
     // Properties
 
-    private final String id, name, place;
+    private final String id, name, place, nameTeacher;
 
     private final Set<CourseScheduleDTO> schedules;
 
@@ -22,6 +23,7 @@ public class CourseDTO {
         this.id = course.getId();
         this.name = course.getName();
         this.place = course.getPlace();
+        this.nameTeacher = course.getTeacher() != null ? course.getTeacher().getFullName() : "Not teacher";
         this.schedules = course.getCourseSchedules().stream().map(CourseScheduleDTO::new).collect(Collectors.toSet());
     }
 
@@ -35,6 +37,10 @@ public class CourseDTO {
 
     public String getPlace() {
         return place;
+    }
+
+    public String getNameTeacher() {
+        return nameTeacher;
     }
 
     public Set<CourseScheduleDTO> getSchedules() {
