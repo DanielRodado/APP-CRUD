@@ -102,10 +102,12 @@ public class CourseServiceImpl implements CourseService {
         try {
             validateCourseApp(newCourseApp);
             Course course = createCourseFromDTO(newCourseApp);
+            saveCourse(course);
             assignRelationships(course, newCourseApp.teacherId(), newCourseApp.idSchedules());
+            saveCourse(course);
             return new ResponseEntity<>("Course created!", HttpStatus.CREATED);
         } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), e.getMessage().contains("found")
+            return new ResponseEntity<>(e.getMessage(), e.getMessage().contains("not found")
                                                          ? HttpStatus.NOT_FOUND
                                                          : HttpStatus.FORBIDDEN);
 
@@ -114,17 +116,33 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void validateCourseApp(NewCourseApplicationDTO newCourseApp) {
+        validateName(newCourseApp.name());
+        validatePlace(newCourseApp.place());
         validateExistsTeacher(newCourseApp.teacherId());
         validateSchedules(newCourseApp.idSchedules());
     }
 
     @Override
+    public void validateName(String name) {
+        if (name.isBlank()) {
+            throw validationException("The name cannot be empty.");
+        }
+    }
+
+    @Override
+    public void validatePlace(String place) {
+        if (place.isBlank()) {
+            throw validationException("The place cannot be empty.");
+        }
+    }
+
+    @Override
     public void validateExistsTeacher(String teacherId) {
-        try {
+        if (teacherId != null) {
             if (!teacherService.existsTeacherById(teacherId)) {
                 throw validationException("Teacher not found");
             }
-        } catch (Exception ignored) {}
+        }
     }
 
     @Override
@@ -138,7 +156,7 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public void validateLengthSetIdSchedules(Set<String> idSchedules) {
         if (idSchedules.size() > 2) {
-            throw  validationException("Courses can only have two schedules.");
+            throw validationException("Courses can only have two schedules.");
         }
     }
 

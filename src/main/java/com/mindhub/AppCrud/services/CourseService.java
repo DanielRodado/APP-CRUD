@@ -42,6 +42,10 @@ public interface CourseService {
 
     void validateCourseApp(NewCourseApplicationDTO newCourseApp);
 
+    void validateName(String name);
+
+    void validatePlace(String place);
+
     void validateExistsTeacher(String teacherId);
 
     void validateSchedules(Set<String> idSchedules);
