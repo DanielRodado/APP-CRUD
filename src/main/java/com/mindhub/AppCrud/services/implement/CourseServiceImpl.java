@@ -2,6 +2,7 @@ package com.mindhub.AppCrud.services.implement;
 
 import com.mindhub.AppCrud.DTO.CourseDTO;
 import com.mindhub.AppCrud.DTO.NewCourseApplicationDTO;
+import com.mindhub.AppCrud.DTO.RecordStudentCourse;
 import com.mindhub.AppCrud.models.Course;
 import com.mindhub.AppCrud.models.Schedule;
 import com.mindhub.AppCrud.models.StudentCourse;
@@ -304,5 +305,37 @@ public class CourseServiceImpl implements CourseService {
             throw validationException("The maximum capacity of a course is 20 students.");
         }
     }
+
+    @Override
+    public ResponseEntity<String> removeCourseFromStudent(String studentEmail, String courseId) {
+        try {
+            RecordStudentCourse studentCourse = validationsBeforeRemoveCourseFromStudent(studentEmail, courseId);
+            studentCourseService.softDeleteStudentCourse(studentCourse.student(), studentCourse.course());
+            return new ResponseEntity<>("Course removed!", HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), getHttpStatusByCondition(e.getMessage()));
+        }
+    }
+
+    @Override
+    public RecordStudentCourse validationsBeforeRemoveCourseFromStudent(String studentEmail, String courseId) {
+        validateExistsCourseById(courseId);
+        RecordStudentCourse studentCourse = createNewRecordStudentCourseByEmailAndId(studentEmail, courseId);
+        validateNotExistsStudentInCourse(studentCourse.student(), studentCourse.course());
+        return studentCourse;
+    }
+
+    @Override
+    public void validateNotExistsStudentInCourse(Student student, Course course) {
+        if (!studentCourseService.existsStudentCourseByStudentAndCourse(student, course)) {
+            throw validationException("The student is not in the course.");
+        }
+    }
+
+    @Override
+    public RecordStudentCourse createNewRecordStudentCourseByEmailAndId(String studentEmail, String courseId) {
+        return new RecordStudentCourse(studentService.getStudentByEmail(studentEmail), getCourseById(courseId));
+    }
+
 
 }

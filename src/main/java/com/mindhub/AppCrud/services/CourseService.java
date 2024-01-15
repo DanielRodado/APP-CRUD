@@ -2,6 +2,7 @@ package com.mindhub.AppCrud.services;
 
 import com.mindhub.AppCrud.DTO.CourseDTO;
 import com.mindhub.AppCrud.DTO.NewCourseApplicationDTO;
+import com.mindhub.AppCrud.DTO.RecordStudentCourse;
 import com.mindhub.AppCrud.models.Course;
 import com.mindhub.AppCrud.models.Schedule;
 import com.mindhub.AppCrud.models.StudentCourse;
@@ -96,5 +97,14 @@ public interface CourseService {
     void validateExistsStudentInCourse(Student student, Course course);
 
     void validateQuantityStudentInCourse(Course course);
+
+    // Remove Course from Student
+    ResponseEntity<String> removeCourseFromStudent(String studentEmail, String courseId);
+
+    RecordStudentCourse validationsBeforeRemoveCourseFromStudent(String studentEmail, String courseId);
+
+    void validateNotExistsStudentInCourse(Student student, Course course);
+
+    RecordStudentCourse createNewRecordStudentCourseByEmailAndId(String studentEmail, String courseId);
 
 }

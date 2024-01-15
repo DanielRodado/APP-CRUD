@@ -71,22 +71,7 @@ public class CourseController {
     @PatchMapping("/students/current/remove/courses")
     public ResponseEntity<String> removeCourseFromStudent(Authentication studentCurrent,
                                                           @RequestParam String courseId) {
-
-        if (!courseService.existsCourseById(courseId)) {
-            return new ResponseEntity<>("Course not found.", HttpStatus.FORBIDDEN);
-        }
-
-        Student student = studentService.getStudentByEmail(studentCurrent.getName());
-        Course course = courseService.getCourseById(courseId);
-
-        if (!studentCourseService.existsStudentCourseByStudentAndCourse(student, course)) {
-            return new ResponseEntity<>("The student is not in the course.", HttpStatus.FORBIDDEN);
-        }
-
-        studentCourseService.softDeleteStudentCourse(student, course);
-
-        return new ResponseEntity<>("Course removed!", HttpStatus.OK);
-
+        return courseService.removeCourseFromStudent(studentCurrent.getName(), courseId);
     }
 
     @GetMapping("/courses/schedules/start-time-range")
