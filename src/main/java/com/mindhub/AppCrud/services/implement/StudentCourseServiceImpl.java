@@ -22,6 +22,11 @@ public class StudentCourseServiceImpl implements StudentCourseService {
     }
 
     @Override
+    public byte countStudentCourseByCourseAndIsActive(Course course, Boolean isActive) {
+        return studentCourseRepository.countByCourseAndIsActive(course, isActive);
+    }
+
+    @Override
     public void softDeleteStudentCourse(Student student, Course course) {
         studentCourseRepository.softDeleteStudentCourse(student, course);
     }
@@ -32,11 +37,11 @@ public class StudentCourseServiceImpl implements StudentCourseService {
     }
 
     @Override
-    public void createNewStudentCourse(Student student, Course course) {
+    public StudentCourse createNewStudentCourse(Student student, Course course) {
         StudentCourse studentCourse = new StudentCourse(LocalDate.now());
         studentCourse.setStudent(student);
         studentCourse.setCourse(course);
-        saveStudentCourse(studentCourse);
+        return studentCourse;
     }
 
 }

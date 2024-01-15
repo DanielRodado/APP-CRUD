@@ -2,10 +2,7 @@ package com.mindhub.AppCrud.services.implement;
 
 import com.mindhub.AppCrud.DTO.NewScheduleApplicationDTO;
 import com.mindhub.AppCrud.DTO.ScheduleDTO;
-import com.mindhub.AppCrud.models.CourseSchedule;
-import com.mindhub.AppCrud.models.DayWeek;
-import com.mindhub.AppCrud.models.Schedule;
-import com.mindhub.AppCrud.models.ShiftType;
+import com.mindhub.AppCrud.models.*;
 import com.mindhub.AppCrud.repositories.ScheduleRepository;
 import com.mindhub.AppCrud.services.CourseScheduleService;
 import com.mindhub.AppCrud.services.ScheduleService;

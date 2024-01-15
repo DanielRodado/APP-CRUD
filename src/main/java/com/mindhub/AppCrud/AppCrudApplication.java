@@ -16,9 +16,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
-import static com.mindhub.AppCrud.utils.ScheduleUtil.checkRangeHourWithShiftType;
-import static com.mindhub.AppCrud.utils.ValidationExceptionUtil.validationException;
-
 @SpringBootApplication
 public class AppCrudApplication {
 

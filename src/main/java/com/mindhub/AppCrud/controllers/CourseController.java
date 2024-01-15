@@ -63,18 +63,9 @@ public class CourseController {
         return courseService.removeCourseFromTeacher(teacherCurrent.getName(), courseId);
     }
 
-    @PostMapping("/students/current/add/courses")
+    @PatchMapping("/students/current/add/courses")
     public ResponseEntity<String> addCourseToStudent(Authentication studentCurrent, @RequestParam String courseId) {
-
-        if (!courseService.existsCourseById(courseId)) {
-            return new ResponseEntity<>("Course not found", HttpStatus.FORBIDDEN);
-        }
-
-        studentCourseService.createNewStudentCourse(studentService.getStudentByEmail(studentCurrent.getName()),
-                                                    courseService.getCourseById(courseId));
-
-        return new ResponseEntity<>("Course add!", HttpStatus.CREATED);
-
+        return courseService.addCourseToStudent(studentCurrent.getName(), courseId);
     }
 
     @PatchMapping("/students/current/remove/courses")

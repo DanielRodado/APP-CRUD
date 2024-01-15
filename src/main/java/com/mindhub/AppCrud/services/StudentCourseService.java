@@ -8,10 +8,12 @@ public interface StudentCourseService {
 
     boolean existsStudentCourseByStudentAndCourse(Student student, Course course);
 
+    byte countStudentCourseByCourseAndIsActive(Course course, Boolean isActive);
+
     void softDeleteStudentCourse(Student student, Course course);
 
     void saveStudentCourse(StudentCourse studentCourse);
 
-    void createNewStudentCourse(Student student, Course course);
+    StudentCourse createNewStudentCourse(Student student, Course course);
 
 }

@@ -4,12 +4,11 @@ import com.mindhub.AppCrud.DTO.CourseDTO;
 import com.mindhub.AppCrud.DTO.NewCourseApplicationDTO;
 import com.mindhub.AppCrud.models.Course;
 import com.mindhub.AppCrud.models.Schedule;
+import com.mindhub.AppCrud.models.StudentCourse;
+import com.mindhub.AppCrud.models.subClass.Student;
 import com.mindhub.AppCrud.models.subClass.Teacher;
 import com.mindhub.AppCrud.repositories.CourseRepository;
-import com.mindhub.AppCrud.services.CourseScheduleService;
-import com.mindhub.AppCrud.services.CourseService;
-import com.mindhub.AppCrud.services.ScheduleService;
-import com.mindhub.AppCrud.services.TeacherService;
+import com.mindhub.AppCrud.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,10 +32,16 @@ public class CourseServiceImpl implements CourseService {
     private TeacherService teacherService;
 
     @Autowired
+    private StudentService studentService;
+
+    @Autowired
     private ScheduleService scheduleService;
 
     @Autowired
     private CourseScheduleService courseScheduleService;
+
+    @Autowired
+    private StudentCourseService studentCourseService;
 
     @Override
     public Set<Course> getAllCourses() {
@@ -91,6 +96,13 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public void saveCourse(Course course) {
         courseRepository.save(course);
+    }
+
+    // Others methods
+
+    @Override
+    public Set<Course> getCoursesFromStudentCourse(Set<StudentCourse> studentCourses) {
+        return studentCourses.stream().map(StudentCourse::getCourse).collect(Collectors.toSet());
     }
 
 
@@ -255,6 +267,41 @@ public class CourseServiceImpl implements CourseService {
     public void validateCourseInTeacher(String courseId, String teacherEmail) {
         if (!existsCourseByIdAndTeacher(courseId, teacherService.getTeacherByEmail(teacherEmail))) {
             throw validationException("The course does not belong to the teacher.");
+        }
+    }
+
+    @Override
+    public ResponseEntity<String> addCourseToStudent(String studentEmail, String courseId) {
+        try {
+            StudentCourse studentCourse = validationsBeforeAddCourseToStudent(studentEmail, courseId);
+            studentCourseService.saveStudentCourse(studentCourse);
+            return new ResponseEntity<>("Course added to student!", HttpStatus.OK);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), getHttpStatusByCondition(e.getMessage()));
+        }
+    }
+
+    @Override
+    public StudentCourse validationsBeforeAddCourseToStudent(String studentEmail, String courseId) {
+        validateExistsCourseById(courseId);
+        StudentCourse studentCourse =
+                studentCourseService.createNewStudentCourse(studentService.getStudentByEmail(studentEmail), getCourseById(courseId));
+        validateExistsStudentInCourse(studentCourse.getStudent(), studentCourse.getCourse());
+        validateQuantityStudentInCourse(studentCourse.getCourse());
+        return studentCourse;
+    }
+
+    @Override
+    public void validateExistsStudentInCourse(Student student, Course course) {
+        if (studentCourseService.existsStudentCourseByStudentAndCourse(student, course)) {
+            throw validationException("The student is already in the course.");
+        }
+    }
+
+    @Override
+    public void validateQuantityStudentInCourse(Course course) {
+        if (studentCourseService.countStudentCourseByCourseAndIsActive(course, true) > 20) {
+            throw validationException("The maximum capacity of a course is 20 students.");
         }
     }
 
