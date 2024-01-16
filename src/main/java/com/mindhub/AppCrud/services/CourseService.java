@@ -120,4 +120,12 @@ public interface CourseService {
 
     ResponseEntity<Object> createNewResponseWithCourseDTO(Set<Course> courses);
 
+    // Get Courses between endTime - range -
+    ResponseEntity<Object> getCoursesDTOBetweenEndTime(LocalTime startRange, LocalTime endRange);
+
+    void validationsGetCoursesDTOBetweenEndTime(LocalTime startRange, LocalTime endRange);
+
+    void startRangeDifferenceFromMinimumStartTime(LocalTime startRange);
+
+
 }

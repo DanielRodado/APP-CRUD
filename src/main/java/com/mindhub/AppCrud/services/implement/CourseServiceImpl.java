@@ -384,5 +384,36 @@ public class CourseServiceImpl implements CourseService {
         return new ResponseEntity<>(convertCollectionToCourseDTO(courses), HttpStatus.OK);
     }
 
+    // Get Courses between endTime - range -
+    @Override
+    public ResponseEntity<Object> getCoursesDTOBetweenEndTime(LocalTime startRange, LocalTime endRange) {
+        try {
+            validationsGetCoursesDTOBetweenEndTime(startRange, endRange);
+            Set<Course> courses = courseScheduleService.getAllCoursesByScheduleEndTimeBetween(startRange, endRange);
+            return courses.isEmpty()
+                    ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+                    : createNewResponseWithCourseDTO(courses);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @Override
+    public void validationsGetCoursesDTOBetweenEndTime(LocalTime startRange, LocalTime endRange) {
+        scheduleService.validateStarTimeEqualsEndTime(startRange, endRange, "range");
+        startRangeDifferenceFromMinimumStartTime(startRange);
+        scheduleService.validateEndTimeIsAfterTo(endRange, "range");
+        scheduleService.validateStartTimeIsAfterEndTime(startRange, endRange, "range");
+        scheduleService.validateEndTimeIsBeforeStartTime(endRange, startRange, "range");
+        validateStartRangeAndEndRangLeastRange(startRange, endRange, 30);
+    }
+
+    @Override
+    public void startRangeDifferenceFromMinimumStartTime(LocalTime startRange) {
+        if (checkRangeOfHours(startRange, LocalTime.of(8, 0), 2)) {
+            throw validationException("The end time must be within two hours of the default start time (08:00).");
+        }
+    }
+
 
 }
