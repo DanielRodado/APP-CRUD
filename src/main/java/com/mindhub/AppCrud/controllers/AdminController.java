@@ -43,35 +43,8 @@ public class AdminController {
     private StudentCourseService studentCourseService;
 
     @PostMapping("/admin")
-    public ResponseEntity<String> createNewStudent(@RequestBody NewPersonApplicationDTO newAdminApp) {
-
-        if (newAdminApp.email().isBlank()) {
-            return new ResponseEntity<>("The mail cannot be empty", HttpStatus.FORBIDDEN);
-        }
-
-        if (!verifyEmailByType(newAdminApp.email(), "admin")) {
-            return new ResponseEntity<>("The email must have an '@'; 'admin', after the '@'; '.com', after 'admin';" +
-                    " and no characters after the '.com'", HttpStatus.FORBIDDEN);
-        }
-
-        if (adminService.existsAdminByEmail(newAdminApp.email().toLowerCase())) {
-            return new ResponseEntity<>("This e-mail is registered", HttpStatus.FORBIDDEN);
-        }
-
-        if (newAdminApp.firstName().isBlank()) {
-            return new ResponseEntity<>("This e-mail is registered", HttpStatus.FORBIDDEN);
-        }
-
-        if (newAdminApp.lastName().isBlank()) {
-            return new ResponseEntity<>("This e-mail is registered", HttpStatus.FORBIDDEN);
-        }
-
-        Admin admin = new Admin(newAdminApp.firstName(), newAdminApp.lastName(), newAdminApp.email().toLowerCase(),
-                passwordEncoder.encode(newAdminApp.password()));
-        adminService.saveAdmin(admin);
-
-        return new ResponseEntity<>("Admin created!", HttpStatus.CREATED);
-
+    public ResponseEntity<String> createNewAdmin(@RequestBody NewPersonApplicationDTO newAdminApp) {
+       return adminService.createNewAdmin(newAdminApp);
     }
 
     @PatchMapping("/admin/add/schedules/courses")
