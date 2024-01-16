@@ -25,19 +25,7 @@ import static com.mindhub.AppCrud.utils.ScheduleUtil.checkRangeOfHours;
 public class CourseController {
 
     @Autowired
-    private TeacherService teacherService;
-
-    @Autowired
-    private StudentService studentService;
-
-    @Autowired
     private CourseService courseService;
-
-    @Autowired
-    private ScheduleService scheduleService;
-
-    @Autowired
-    private StudentCourseService studentCourseService;
 
     @Autowired
     private CourseScheduleService courseScheduleService;
