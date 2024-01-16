@@ -15,10 +15,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalTime;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static com.mindhub.AppCrud.utils.ScheduleUtil.checkRangeOfHours;
+import static com.mindhub.AppCrud.utils.ScheduleUtil.checkRangeOfMinutes;
 import static com.mindhub.AppCrud.utils.ValidationExceptionUtil.validationException;
 
 @Service
@@ -102,8 +106,8 @@ public class CourseServiceImpl implements CourseService {
     // Others methods
 
     @Override
-    public Set<Course> getCoursesFromStudentCourse(Set<StudentCourse> studentCourses) {
-        return studentCourses.stream().map(StudentCourse::getCourse).collect(Collectors.toSet());
+    public Set<CourseDTO> convertCollectionToCourseDTO(Collection<Course> courses) {
+        return courses.stream().map(CourseDTO::new).collect(Collectors.toSet());
     }
 
 
@@ -335,6 +339,49 @@ public class CourseServiceImpl implements CourseService {
     @Override
     public RecordStudentCourse createNewRecordStudentCourseByEmailAndId(String studentEmail, String courseId) {
         return new RecordStudentCourse(studentService.getStudentByEmail(studentEmail), getCourseById(courseId));
+    }
+
+    // Get Courses between startTime - range -
+    @Override
+    public ResponseEntity<Object> getCoursesDTOBetweenStartTime(LocalTime startRange, LocalTime endRange) {
+        try {
+            validationsGetCoursesDTOBetweenStartTime(startRange, endRange);
+            Set<Course> courses = courseScheduleService.getAllCoursesByScheduleStartTimeBetween(startRange, endRange);
+            return courses.isEmpty()
+                    ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
+                    : createNewResponseWithCourseDTO(courses);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+        }
+    }
+
+    @Override
+    public void validationsGetCoursesDTOBetweenStartTime(LocalTime startRange, LocalTime endRange) {
+        scheduleService.validateStarTimeEqualsEndTime(startRange, endRange, "range");
+        scheduleService.validateStartTimeIsBeforeTo(startRange, "range");
+        scheduleService.validateStartTimeIsAfterEndTime(startRange, endRange, "range");
+        scheduleService.validateEndTimeIsBeforeStartTime(endRange, startRange, "range");
+        endRangeDifferenceFromMaximumEndTime(endRange, 2);
+        validateStartRangeAndEndRangLeastRange(startRange, endRange, 30);
+    }
+
+    @Override
+    public void endRangeDifferenceFromMaximumEndTime(LocalTime endRange, int range) {
+        if (checkRangeOfHours(endRange, LocalTime.of(21, 30), 2)) {
+            throw validationException("The start time must be within two hours of the default end time (21:30).");
+        }
+    }
+
+    @Override
+    public void validateStartRangeAndEndRangLeastRange(LocalTime startRange, LocalTime endRange, int range) {
+        if (checkRangeOfMinutes(startRange, endRange, 30)) {
+            throw validationException("There must be a minimum of thirty minutes difference between ranges.");
+        }
+    }
+
+    @Override
+    public ResponseEntity<Object> createNewResponseWithCourseDTO(Set<Course> courses) {
+        return new ResponseEntity<>(convertCollectionToCourseDTO(courses), HttpStatus.OK);
     }
 
 

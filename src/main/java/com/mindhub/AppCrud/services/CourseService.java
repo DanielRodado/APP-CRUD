@@ -11,6 +11,8 @@ import com.mindhub.AppCrud.models.subClass.Teacher;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.time.LocalTime;
+import java.util.Collection;
 import java.util.Set;
 
 public interface CourseService {
@@ -41,7 +43,7 @@ public interface CourseService {
 
     // Others methods
 
-    Set<Course> getCoursesFromStudentCourse(Set<StudentCourse> studentCourses);
+    Set<CourseDTO> convertCollectionToCourseDTO(Collection<Course> courses);
 
     // Methods controllers
 
@@ -106,5 +108,16 @@ public interface CourseService {
     void validateNotExistsStudentInCourse(Student student, Course course);
 
     RecordStudentCourse createNewRecordStudentCourseByEmailAndId(String studentEmail, String courseId);
+
+    // Get Courses between startTime - range -
+    ResponseEntity<Object> getCoursesDTOBetweenStartTime(LocalTime startRange, LocalTime endRange);
+
+    void validationsGetCoursesDTOBetweenStartTime(LocalTime startRange, LocalTime endRange);
+
+    void endRangeDifferenceFromMaximumEndTime(LocalTime endRange, int range);
+
+    void validateStartRangeAndEndRangLeastRange(LocalTime startRange, LocalTime endRange, int range);
+
+    ResponseEntity<Object> createNewResponseWithCourseDTO(Set<Course> courses);
 
 }

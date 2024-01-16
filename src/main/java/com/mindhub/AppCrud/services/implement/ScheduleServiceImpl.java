@@ -108,11 +108,11 @@ public class ScheduleServiceImpl implements ScheduleService {
         validateDayWeek(newScheduleApp.dayWeek());
         validateShiftType(newScheduleApp.shiftType());
         validateExistsSchedule(newScheduleApp);
-        validateStarTimeEqualsEndTime(newScheduleApp.startTime(), newScheduleApp.endTime());
-        validateStartTimeIsBeforeTo(newScheduleApp.startTime());
-        validateStartTimeIsAfterEndTime(newScheduleApp.startTime(), newScheduleApp.endTime());
-        validateEndTimeIsAfterTo(newScheduleApp.endTime());
-        validateEndTimeIsBeforeStartTime(newScheduleApp.endTime(), newScheduleApp.startTime());
+        validateStarTimeEqualsEndTime(newScheduleApp.startTime(), newScheduleApp.endTime(), "time");
+        validateStartTimeIsBeforeTo(newScheduleApp.startTime(), "time");
+        validateStartTimeIsAfterEndTime(newScheduleApp.startTime(), newScheduleApp.endTime(), "time");
+        validateEndTimeIsAfterTo(newScheduleApp.endTime(), "time");
+        validateEndTimeIsBeforeStartTime(newScheduleApp.endTime(), newScheduleApp.startTime(), "time");
         validateStartTimeAndEndTimeLeastRange(newScheduleApp.startTime(), newScheduleApp.endTime(), 2);
         validateStartTimeAndEndTimeMatchShiftType(newScheduleApp.startTime(), newScheduleApp.endTime(),
                 ShiftType.valueOf(newScheduleApp.shiftType()));
@@ -145,37 +145,37 @@ public class ScheduleServiceImpl implements ScheduleService {
     }
 
     @Override
-    public void validateStarTimeEqualsEndTime(LocalTime startTime, LocalTime endTime) {
+    public void validateStarTimeEqualsEndTime(LocalTime startTime, LocalTime endTime, String typeCondition) {
         if (startTime.equals(endTime)) {
-            throw validationException("The start time cannot be the same as the end time.");
+            throw validationException("The start time cannot be the same as the end "+ typeCondition +".");
         }
     }
 
     @Override
-    public void validateStartTimeIsBeforeTo(LocalTime startTime) {
+    public void validateStartTimeIsBeforeTo(LocalTime startTime, String typeCondition) {
         if (startTime.isBefore(LocalTime.of(8, 0))) {
-            throw validationException("The start time cannot be before 8:00 hrs.");
+            throw validationException("The start "+typeCondition+" cannot be before 8:00 hrs.");
         }
     }
 
     @Override
-    public void validateStartTimeIsAfterEndTime(LocalTime startTime, LocalTime endTime) {
+    public void validateStartTimeIsAfterEndTime(LocalTime startTime, LocalTime endTime, String typeCondition) {
         if (startTime.isAfter(endTime)) {
-            throw validationException("The start time cannot be after the end time.");
+            throw validationException("The start "+typeCondition+" cannot be after the end "+typeCondition+".");
         }
     }
 
     @Override
-    public void validateEndTimeIsAfterTo(LocalTime endTime) {
+    public void validateEndTimeIsAfterTo(LocalTime endTime, String typeCondition) {
         if (endTime.isAfter(LocalTime.of(21, 30))) {
-            throw validationException("The end time cannot be later than 21:30 hrs.");
+            throw validationException("The end "+typeCondition+" cannot be later than 21:30 hrs.");
         }
     }
 
     @Override
-    public void validateEndTimeIsBeforeStartTime(LocalTime endTime, LocalTime startTime) {
+    public void validateEndTimeIsBeforeStartTime(LocalTime endTime, LocalTime startTime, String typeCondition) {
         if (endTime.isBefore(startTime)) {
-            throw validationException("The end time cannot be earlier than the start time.");
+            throw validationException("The end "+typeCondition+" cannot be earlier than the start "+typeCondition+".");
         }
     }
 

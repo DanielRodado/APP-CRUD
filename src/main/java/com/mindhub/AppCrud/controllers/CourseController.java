@@ -77,41 +77,7 @@ public class CourseController {
     @GetMapping("/courses/schedules/start-time-range")
     public ResponseEntity<Object> getCoursesDTOBetweenStartTime(@RequestParam(name = "startRange") LocalTime scheduleStartTimeStartRange,
                                                                 @RequestParam(name = "endRange") LocalTime scheduleStartTimeEndRange) {
-
-
-        if (scheduleStartTimeStartRange.equals(scheduleStartTimeEndRange)) {
-            return new ResponseEntity<>("The start time cannot be the same as the end time.", HttpStatus.FORBIDDEN);
-        }
-
-        if (scheduleStartTimeStartRange.isBefore(LocalTime.of(8, 0))) {
-            return new ResponseEntity<>("The start time cannot be before 8:00 hrs.", HttpStatus.FORBIDDEN);
-        }
-
-        if (scheduleStartTimeStartRange.isAfter(scheduleStartTimeEndRange)) {
-            return new ResponseEntity<>("The start time (" + scheduleStartTimeStartRange + ") cannot be before end time ("
-                    + scheduleStartTimeEndRange + ")", HttpStatus.FORBIDDEN);
-        }
-
-        if (scheduleStartTimeEndRange.isBefore(scheduleStartTimeStartRange)) {
-            return new ResponseEntity<>("The ent time (" + scheduleStartTimeEndRange + ") cannot be later than " +
-                    "start time (" + scheduleStartTimeStartRange + ")", HttpStatus.FORBIDDEN);
-        }
-
-        if (checkRangeOfHours(scheduleStartTimeEndRange, LocalTime.of(21, 30), 2)) {
-            return new ResponseEntity<>("The start time must be within two hours of the default end time (21:30).", HttpStatus.FORBIDDEN);
-        }
-
-        if (checkRangeOfHours(scheduleStartTimeStartRange, scheduleStartTimeEndRange, 2)) {
-            return new ResponseEntity<>("There must be a minimum of two hours difference between hour ranges.", HttpStatus.FORBIDDEN);
-        }
-
-        Set<Course> courses =
-                courseScheduleService.getAllCoursesByScheduleStartTimeBetween(scheduleStartTimeStartRange,
-                                                                              scheduleStartTimeEndRange);
-
-        return courses.isEmpty() ? new ResponseEntity<>(HttpStatus.NO_CONTENT)
-                : new ResponseEntity<>(courses.stream().map(CourseDTO::new).collect(Collectors.toSet()),
-                HttpStatus.OK);
+        return courseService.getCoursesDTOBetweenStartTime(scheduleStartTimeStartRange, scheduleStartTimeEndRange);
     }
 
 

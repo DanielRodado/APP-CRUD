@@ -44,15 +44,15 @@ public interface ScheduleService {
 
     void validateExistsSchedule(NewScheduleApplicationDTO newScheduleApp);
 
-    void validateStarTimeEqualsEndTime(LocalTime startTime, LocalTime endTime);
+    void validateStarTimeEqualsEndTime(LocalTime startTime, LocalTime endTime, String typeCondition);
 
-    void validateStartTimeIsBeforeTo(LocalTime startTime);
+    void validateStartTimeIsBeforeTo(LocalTime startTime, String typeCondition);
 
-    void validateStartTimeIsAfterEndTime(LocalTime startTime, LocalTime endTime);
+    void validateStartTimeIsAfterEndTime(LocalTime startTime, LocalTime endTime, String typeCondition);
 
-    void validateEndTimeIsAfterTo(LocalTime endTime);
+    void validateEndTimeIsAfterTo(LocalTime endTime, String typeCondition);
 
-    void validateEndTimeIsBeforeStartTime(LocalTime endTime, LocalTime startTime);
+    void validateEndTimeIsBeforeStartTime(LocalTime endTime, LocalTime startTime, String typeCondition);
 
     void validateStartTimeAndEndTimeLeastRange(LocalTime startTime, LocalTime endTime, int range);
 
