@@ -27,9 +27,6 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
-    @Autowired
-    private CourseScheduleService courseScheduleService;
-
     @GetMapping("/courses")
     public Set<CourseDTO> getAllCoursesDTO() {
         return courseService.getAllCoursesDTO();
